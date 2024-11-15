@@ -1,4 +1,4 @@
-package api_adapters;
+package api_adapters.ChariotAPI;
 //CreateTime: 2024-11-10 7:10 p.m.
 
 import chariot.util.Board;
