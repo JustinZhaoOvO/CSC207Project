@@ -11,21 +11,19 @@ public class Main {
      * @param args unused arguments
      */
     public static void main(String[] args) {
-//        final AppBuilder appBuilder = new AppBuilder();
-//        // TODO: add the Logout Use Case to the app using the appBuilder
-//        final JFrame application = appBuilder
-//                                            .addLoginView()
-//                                            .addSignupView()
-//                                            .addLoggedInView()
-//                                            .addSignupUseCase()
-//                                            .addLoginUseCase()
-//                                            .addLogoutUseCase()
-//                                            .addChangePasswordUseCase()
-//                                            .build();
-//
-//        application.pack();
-//        application.setVisible(true);
+        final AppBuilder appBuilder = new AppBuilder();
+        // TODO: add the Logout Use Case to the app using the appBuilder
+        final JFrame application = appBuilder
+                                            .addLoginView()
+                                            .addSignupView()
+                                            .addLoggedInView()
+                                            .addSignupUseCase()
+                                            .addLoginUseCase()
+                                            .addLogoutUseCase()
+                                            .addChangePasswordUseCase()
+                                            .build();
 
-        System.out.println("HELLO");
+        application.pack();
+        application.setVisible(true);
     }
 }
