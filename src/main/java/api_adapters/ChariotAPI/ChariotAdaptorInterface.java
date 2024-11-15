@@ -1,4 +1,4 @@
-package api_adapters;
+package api_adapters.ChariotAPI;
 
 import chariot.util.Board;
 
