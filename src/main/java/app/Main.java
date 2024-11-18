@@ -1,6 +1,8 @@
 package app;
 
-import javax.swing.JFrame;
+import view.BoardView.BoardView;
+
+import javax.swing.*;
 
 /**
  * The Main class of our application.
