@@ -22,8 +22,8 @@ public class Main {
                                             .addLogoutUseCase()
                                             .addChangePasswordUseCase()
                                             .build();
-
-        application.pack();
+        application.setSize(814,637);
+        application.setResizable(false);
         application.setVisible(true);
     }
 }
