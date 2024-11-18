@@ -1,6 +1,6 @@
 package app;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 /**
  * The Main class of our application.
