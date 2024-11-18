@@ -1,7 +1,5 @@
 package app;
 
-import view.BoardView.BoardView;
-
 import javax.swing.*;
 
 /**
