@@ -1,11 +1,5 @@
 package app;
 
-import java.awt.CardLayout;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
 import data_access.InMemoryUserDataAccessObject;
 import entity.CommonUserFactory;
 import entity.UserFactory;
@@ -37,6 +31,9 @@ import view.LoggedInView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
