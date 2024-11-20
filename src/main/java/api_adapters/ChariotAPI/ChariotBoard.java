@@ -2,6 +2,7 @@ package api_adapters.ChariotAPI;
 //CreateTime: 2024-11-10 7:10 p.m.
 
 import chariot.util.Board;
+import entity.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ChariotBoard implements ChariotAdaptorInterface {
     }
 
     public List<String> getValidMovesOfPosition(String position){
-
+        if (position.length() != 2) return null;
         List<String> ans = new ArrayList<>();
         List<String> validMoves = getValidMoves();
         for (String move : validMoves) {
@@ -29,6 +30,10 @@ public class ChariotBoard implements ChariotAdaptorInterface {
                 ans.add(move);
             }
         }return ans;
+    }
+
+    public Board.Piece getPieceAt(Coordinate coordinate){
+        return this.board.get(coordinate.toString());
     }
 
     /**

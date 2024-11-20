@@ -3,9 +3,15 @@ package view.BoardView;
 
 import api_adapters.ChariotAPI.ChariotBoard;
 import interface_adapter.board.BoardViewModel;
+import interface_adapter.board.move.MoveController;
+import interface_adapter.board.move.MovePresenter;
 import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.repaintboard.RepaintBoardPresenter;
+import interface_adapter.board.select.SelectController;
+import interface_adapter.board.select.SelectPresenter;
+import use_case.board.move.MoveInteractor;
 import use_case.board.repaintboard.RepaintBoardInteractor;
+import use_case.board.select.SelectInteractor;
 import view.WindowView.WindowLayout;
 import view.WindowView.WindowView;
 
@@ -50,8 +56,18 @@ public class ViewTest extends JFrame{
         RepaintBoardInteractor repaintBoardInteractor = new RepaintBoardInteractor(repaintBoardPresenter);
         RepaintBoardController repaintBoardController = new RepaintBoardController(repaintBoardInteractor);
 
+        SelectPresenter selectPresenter = new SelectPresenter(boardViewModel);
+        SelectInteractor selectInteractor = new SelectInteractor(selectPresenter);
+        SelectController selectController = new SelectController(selectInteractor);
+
+        MovePresenter movePresenter = new MovePresenter(repaintBoardController, selectController);
+        MoveInteractor moveInteractor = new MoveInteractor(movePresenter);
+        MoveController moveController = new MoveController(moveInteractor);
+
         //set Controllers
         boardView.setRepaintBoardController(repaintBoardController);
+        boardView.setSelectController(selectController);
+        boardView.setMoveController(moveController);
 
         //add BoardView to the listener list of BoardViewModel
         boardViewModel.addPropertyChangeListener(boardView);

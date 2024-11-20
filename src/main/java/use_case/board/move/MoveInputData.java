@@ -4,6 +4,8 @@ package use_case.board.move;
 import api_adapters.ChariotAPI.ChariotBoard;
 import view.BoardView.PiecesView.PiecesView;
 
-public record MoveInputData(ChariotBoard board, PiecesView piecesView) {
+import java.util.List;
+
+public record MoveInputData(ChariotBoard board, PiecesView piecesView, List<String> validMoves) {
 
 }

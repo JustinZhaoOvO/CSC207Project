@@ -6,7 +6,9 @@ import entity.BoardConstants;
 import entity.Coordinate;
 import interface_adapter.BoardStateConstants;
 import interface_adapter.board.BoardState;
+import interface_adapter.board.move.MoveController;
 import interface_adapter.board.repaintboard.RepaintBoardController;
+import interface_adapter.board.select.SelectController;
 import view.BoardView.PiecesView.PiecesListener;
 import view.BoardView.PiecesView.PiecesView;
 
@@ -14,16 +16,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 
 public class BoardView extends JPanel implements PropertyChangeListener {
 
     private PiecesView selected;
+
+    private List<String> validMoves;
 
     private PiecesView[][] board;
 
     private PiecesView mouseHoverOn;
 
     private RepaintBoardController repaintBoardController;
+
+    private SelectController selectController;
+
+    private MoveController moveController;
 
     private ChariotBoard chariotBoard;
 
@@ -47,8 +56,17 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         repaintBoardController.execute(chariotBoard);
     }
 
+
     public void setRepaintBoardController(RepaintBoardController repaintBoardController) {
         this.repaintBoardController = repaintBoardController;
+    }
+
+    public void setSelectController(SelectController selectController) {
+        this.selectController = selectController;
+    }
+
+    public void setMoveController(MoveController moveController) {
+        this.moveController = moveController;
     }
 
     public void mouseEnterPiece(PiecesView p){
@@ -77,6 +95,9 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             }else {
                 JOptionPane.showMessageDialog(this, "Repainting the board failed");
             }
+        }else if (propertyName.equals(BoardStateConstants.SELECT)) {
+            selectHelper(newValue);
+        }else if (propertyName.equals(BoardStateConstants.MOVE)) {
 
         }
     }
@@ -85,11 +106,25 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         return board;
     }
 
-    public void repaintBoard(BoardState state){
+    public void selectHelper(BoardState state) {
+        this.selected = state.getSelected();
+        this.validMoves = state.getValidMoves();
+        selected.setSelected(true);
+        for (String validMove : validMoves) {
+            String stringCoordinate = validMove.substring(2, 4);// a UCI move is like f5a1
+            Coordinate coordinate = Coordinate.fromString(stringCoordinate);
+            assert coordinate != null;
+            board[coordinate.getY()][coordinate.getX()].setValidMoveToHere(true);
+        }this.repaint();
+    }
+
+    public void repaintBoard(BoardState state) {
 
         Boolean repaintSuccess = state.getRepaintSuccess();
 
         if (repaintSuccess) {
+            this.selected = null;
+            this.validMoves = null;
             PiecesView[][] piecesViews = state.getPiecesViews();
             for (int i = 0; i < BoardConstants.SIZEOFABOARD; i++) {
                 for (int j = 0; j < BoardConstants.SIZEOFABOARD; j++) {
@@ -99,16 +134,16 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     }
                 }
             }this.repaint();
+        }else {
+            JOptionPane.showMessageDialog(this, "Repaint Failed");
         }
     }
 
     public void clickOn(PiecesView p) {
-        Coordinate coor = p.getCoordinate();
         if (selected != null){
-//            moveController(this.chariotBoard, p);
+            moveController.execute(this.chariotBoard, p, this.validMoves);
         }else {
-            System.out.println("Clicked");
-//            selectController(this.chariotBoard, p);
+            selectController.execute(this.chariotBoard, p);
         }
     }
 }

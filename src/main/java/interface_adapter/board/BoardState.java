@@ -3,36 +3,28 @@ package interface_adapter.board;
 
 import view.BoardView.PiecesView.PiecesView;
 
+import java.util.List;
+
 public class BoardState {
     private Boolean repaintSuccess;
 
     private PiecesView[][] piecesViews;
 
-    private Boolean blackTurn;
+    private PiecesView selected;
 
-    private String selected;
+    private List<String> validMoves;
 
-    public boolean getBlackTurn() {
-        return blackTurn;
-    }
-
-    public void reverseTurn() {
-        this.blackTurn = !this.blackTurn;
-    }
 
     public BoardState() {
     }
 
-    public String getSelected() {
+
+    public PiecesView getSelected() {
         return selected;
     }
 
-    public void setSelected(String selected) {
+    public void setSelected(PiecesView selected) {
         this.selected = selected;
-    }
-
-    public void cleanSelected() {
-        this.selected = "";
     }
 
     public PiecesView[][] getPiecesViews() {
@@ -49,5 +41,13 @@ public class BoardState {
 
     public Boolean getRepaintSuccess() {
         return repaintSuccess;
+    }
+
+    public List<String> getValidMoves() {
+        return validMoves;
+    }
+
+    public void setValidMoves(List<String> validMoves) {
+        this.validMoves = validMoves;
     }
 }

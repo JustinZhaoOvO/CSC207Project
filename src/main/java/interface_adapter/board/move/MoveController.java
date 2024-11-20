@@ -6,6 +6,8 @@ import use_case.board.move.MoveInputBoundary;
 import use_case.board.move.MoveInputData;
 import view.BoardView.PiecesView.PiecesView;
 
+import java.util.List;
+
 public class MoveController {
     private final MoveInputBoundary interactor;
 
@@ -13,7 +15,7 @@ public class MoveController {
         this.interactor = interactor;
     }
 
-    public void execute(ChariotBoard board, PiecesView piecesView) {
-        this.interactor.execute(new MoveInputData(board, piecesView));
+    public void execute(ChariotBoard board, PiecesView piecesView, List<String> validMoves) {
+        this.interactor.execute(new MoveInputData(board, piecesView, validMoves));
     }
 }
