@@ -3,8 +3,8 @@ package use_case.board.repaintboard;
 
 
 import api_adapters.ChariotAPI.ChariotBoard;
-import entity.Cell;
 import use_case.board.ChariotDataParser;
+import view.BoardView.PiecesView.PiecesView;
 
 public class RepaintBoardInteractor implements RepaintBoardInputBoundary {
 
@@ -20,11 +20,10 @@ public class RepaintBoardInteractor implements RepaintBoardInputBoundary {
     public void execute(RepaintBoardInputData data) {
         try {
             ChariotBoard board = data.getBoard();
-            Cell[][] cells = ChariotDataParser.parsingABoard(board.toString());
-            RepaintBoardOutputData repaintOutputData = new RepaintBoardOutputData(cells);
+            PiecesView[][] piecesViews = ChariotDataParser.parsingABoard(board.toString());
+            RepaintBoardOutputData repaintOutputData = new RepaintBoardOutputData(piecesViews);
             this.presenter.prepareSuccessView(repaintOutputData);
         }catch (Exception e) {
-            System.out.println(e.getMessage());
             this.presenter.prepareFailView(e.getMessage());
         }
     }

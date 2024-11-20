@@ -8,7 +8,16 @@ public interface ChariotAdaptorInterface {
 
     List<String> getValidMoves();
 
+    List<String> getValidMovesOfPosition(String position);
+
     void move(String moveToPlay);
 
-    Board getBoard();
+    boolean ended();
+
+    Board.GameState gameState();
+
+    boolean isBlackToMove();
+
+    boolean isPromotionMove(String move);
+
 }

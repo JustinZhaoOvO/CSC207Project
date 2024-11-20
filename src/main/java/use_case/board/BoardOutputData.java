@@ -1,19 +1,19 @@
 package use_case.board;
 //CreateTime: 2024-11-14 4:59 p.m.
 
-import entity.Cell;
+import view.BoardView.PiecesView.PiecesView;
 
 
 public class BoardOutputData {
-    private Cell[][] board;
+    private PiecesView[][] board;
 
 
-    public BoardOutputData(Cell[][] board) {
+    public BoardOutputData(PiecesView[][] board) {
 
         this.board = board;
     }
 
-    public Cell[][] getBoard() {
+    public PiecesView[][] getBoard() {
         return board;
     }
 }

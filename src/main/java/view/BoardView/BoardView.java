@@ -1,36 +1,50 @@
 package view.BoardView;
 //CreateTime: 2024-11-11 10:26 a.m.
 
-import entity.Cell;
-import entity.Coordinate;
+import entity.BoardConstants;
 import interface_adapter.BoardStateConstants;
 import interface_adapter.board.BoardState;
+import view.BoardView.PiecesView.PiecesListener;
 import view.BoardView.PiecesView.PiecesView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BoardView extends JPanel implements PropertyChangeListener {
 
-    Map<Coordinate, PiecesView> children;
+    private PiecesView selected;
+
+    private PiecesView[][] board;
+
+    private PiecesView mouseHoverOn;
 
     public BoardView() {
-        this.children = new HashMap<>();
+        this.board = new PiecesView[BoardConstants.SIZEOFABOARD][BoardConstants.SIZEOFABOARD];
+        //add Pieces component to the Board component
+        for (int i = 0; i < BoardConstants.SIZEOFABOARD; i++){
+            for (int j = 0; j < BoardConstants.SIZEOFABOARD; j++){
+                PiecesView piecesView = new PiecesView((i + j) % 2 == 0 ? BoardConstants.EVENCELLCOLOR :
+                        BoardConstants.ODDCELLCOLOR, null);
+                piecesView.addMouseListener(new PiecesListener(this));
+                this.add(piecesView);
+                this.board[i][j] = piecesView;
+            }
+        }
     }
 
-    public Component add(PiecesView comp, int i, int j) { //idx = y-x
-        children.put(new Coordinate(i, j), comp);
-        return this.add(comp);
+    public void mouseEnterPiece(PiecesView p){
+
+        if (this.mouseHoverOn != null){
+            this.mouseHoverOn.setHovered(false);
+        }if (p != null){
+            p.setHovered(true);
+        }
+        this.mouseHoverOn = p;
+        this.repaint();
     }
 
-    public Map<Coordinate, PiecesView> getChildren() {
-        return children;
-    }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -40,32 +54,29 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
         BoardState newValue = (BoardState) evt.getNewValue();
-        switch (propertyName) {
-            case BoardStateConstants.REPAINT:
-                repaintBoard(newValue);
+        if (propertyName.equals(BoardStateConstants.REPAINT)) {
+            repaintBoard(newValue);
         }
     }
 
+    public PiecesView[][] getBoard() {
+        return board;
+    }
+
     public void repaintBoard(BoardState state){
+
         Boolean repaintSuccess = state.getRepaintSuccess();
 
         if (repaintSuccess) {
-            Cell[][] cells = state.getCells();
-            for (int i = 0; i < cells.length; i++) {
-                for (int j = 0; j < cells[i].length; j++) {
-                    if (cells[i][j] != null && children.containsKey(new Coordinate(i, j))) {
-                        Cell cell = cells[i][j];
-                        PiecesView piece = children.get(new Coordinate(i, j));
-                        if (!(piece.getCurColor() == cell.getBackgroundColor())){
-                            piece.setColor(cell.getBackgroundColor());
-                            piece.repaint();
-                        }if (piece.getImage() != cell.getImage()){
-                            piece.setImage(cell.getImage());
-                            piece.repaint();
-                        }
+            PiecesView[][] piecesViews = state.getPiecesViews();
+            for (int i = 0; i < BoardConstants.SIZEOFABOARD; i++) {
+                for (int j = 0; j < BoardConstants.SIZEOFABOARD; j++) {
+                    PiecesView cur = board[i][j];
+                    if (cur != null && cur != piecesViews[i][j]) {
+                        cur.copyFrom(piecesViews[i][j]);
                     }
                 }
-            }
+            }this.repaint();
         }
     }
 }
