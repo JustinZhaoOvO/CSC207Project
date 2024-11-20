@@ -1,6 +1,7 @@
 package view.BoardView.PiecesView;
 //CreateTime: 2024-11-11 9:29 a.m.
 
+import entity.Coordinate;
 import view.BoardView.ColorConstants;
 
 import javax.swing.*;
@@ -13,10 +14,12 @@ public class PiecesView extends JPanel {
     private boolean selected;
     private boolean validMoveToHere;
     private boolean hovered;
+    private final Coordinate coordinate;
 
-    public PiecesView(Color backgroundColor, Image image) {
+    public PiecesView(Color backgroundColor, Image image, Coordinate coordinate) {
         this.image = image;
         this.backgroundColor = backgroundColor;
+        this.coordinate = coordinate;
     }
 
     public void paintComponent(Graphics g) {
@@ -54,6 +57,10 @@ public class PiecesView extends JPanel {
 
     public Image getImage() {
         return image;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 
     public void setImage(Image image) {

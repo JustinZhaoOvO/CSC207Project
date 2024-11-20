@@ -1,9 +1,12 @@
 package view.BoardView;
 //CreateTime: 2024-11-11 10:26 a.m.
 
+import api_adapters.ChariotAPI.ChariotBoard;
 import entity.BoardConstants;
+import entity.Coordinate;
 import interface_adapter.BoardStateConstants;
 import interface_adapter.board.BoardState;
+import interface_adapter.board.repaintboard.RepaintBoardController;
 import view.BoardView.PiecesView.PiecesListener;
 import view.BoardView.PiecesView.PiecesView;
 
@@ -20,18 +23,32 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private PiecesView mouseHoverOn;
 
+    private RepaintBoardController repaintBoardController;
+
+    private ChariotBoard chariotBoard;
+
     public BoardView() {
+
         this.board = new PiecesView[BoardConstants.SIZEOFABOARD][BoardConstants.SIZEOFABOARD];
         //add Pieces component to the Board component
         for (int i = 0; i < BoardConstants.SIZEOFABOARD; i++){
             for (int j = 0; j < BoardConstants.SIZEOFABOARD; j++){
                 PiecesView piecesView = new PiecesView((i + j) % 2 == 0 ? BoardConstants.EVENCELLCOLOR :
-                        BoardConstants.ODDCELLCOLOR, null);
+                        BoardConstants.ODDCELLCOLOR, null, new Coordinate(i, j));
                 piecesView.addMouseListener(new PiecesListener(this));
                 this.add(piecesView);
                 this.board[i][j] = piecesView;
             }
         }
+    }
+
+    public void restartTheGameWith(ChariotBoard chariotBoard) {
+        this.chariotBoard = chariotBoard;
+        repaintBoardController.execute(chariotBoard);
+    }
+
+    public void setRepaintBoardController(RepaintBoardController repaintBoardController) {
+        this.repaintBoardController = repaintBoardController;
     }
 
     public void mouseEnterPiece(PiecesView p){
@@ -55,7 +72,12 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         String propertyName = evt.getPropertyName();
         BoardState newValue = (BoardState) evt.getNewValue();
         if (propertyName.equals(BoardStateConstants.REPAINT)) {
-            repaintBoard(newValue);
+            if (newValue.getRepaintSuccess()){
+                repaintBoard(newValue);
+            }else {
+                JOptionPane.showMessageDialog(this, "Repainting the board failed");
+            }
+
         }
     }
 
@@ -77,6 +99,16 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     }
                 }
             }this.repaint();
+        }
+    }
+
+    public void clickOn(PiecesView p) {
+        Coordinate coor = p.getCoordinate();
+        if (selected != null){
+//            moveController(this.chariotBoard, p);
+        }else {
+            System.out.println("Clicked");
+//            selectController(this.chariotBoard, p);
         }
     }
 }

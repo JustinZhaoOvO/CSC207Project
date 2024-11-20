@@ -19,7 +19,7 @@ public class RepaintBoardInteractor implements RepaintBoardInputBoundary {
     @Override
     public void execute(RepaintBoardInputData data) {
         try {
-            ChariotBoard board = data.getBoard();
+            ChariotBoard board = data.board();
             PiecesView[][] piecesViews = ChariotDataParser.parsingABoard(board.toString());
             RepaintBoardOutputData repaintOutputData = new RepaintBoardOutputData(piecesViews);
             this.presenter.prepareSuccessView(repaintOutputData);

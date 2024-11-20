@@ -2,11 +2,11 @@ package use_case.board;
 //CreateTime: 2024-11-10 11:46 p.m.
 
 import entity.BoardConstants;
+import entity.Coordinate;
 import entity.ImageConstants;
 import view.BoardView.PiecesView.PiecesView;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class ChariotDataParser {
 
@@ -47,7 +47,7 @@ public class ChariotDataParser {
                     case BoardConstants.WHITEKING -> curImage = ImageConstants.WHITEKING;
                     case BoardConstants.BLACKROOK -> curImage = ImageConstants.BLACKROOK;
                     case BoardConstants.WHITEROOK -> curImage = ImageConstants.WHITEROOK;
-                }ans[i][j] = new PiecesView(curColor, curImage);
+                }ans[i][j] = new PiecesView(curColor, curImage, new Coordinate(i, j));
             }
         }return ans;
     }

@@ -2,17 +2,14 @@ package view.BoardView;
 //CreateTime: 2024-11-14 4:04 p.m.
 
 import api_adapters.ChariotAPI.ChariotBoard;
-import entity.BoardConstants;
 import interface_adapter.board.BoardViewModel;
 import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.repaintboard.RepaintBoardPresenter;
 import use_case.board.repaintboard.RepaintBoardInteractor;
-import view.BoardView.PiecesView.PiecesView;
 import view.WindowView.WindowLayout;
 import view.WindowView.WindowView;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
 
 public class ViewTest extends JFrame{
     public static void main(String[] args) {
@@ -47,17 +44,20 @@ public class ViewTest extends JFrame{
         //create the board object
         ChariotBoard chariotBoard = new ChariotBoard();
 
-        //initialize the repaint function
+        //initialize the controllers
         BoardViewModel boardViewModel = new BoardViewModel();
         RepaintBoardPresenter repaintBoardPresenter = new RepaintBoardPresenter(boardViewModel);
         RepaintBoardInteractor repaintBoardInteractor = new RepaintBoardInteractor(repaintBoardPresenter);
         RepaintBoardController repaintBoardController = new RepaintBoardController(repaintBoardInteractor);
 
+        //set Controllers
+        boardView.setRepaintBoardController(repaintBoardController);
+
         //add BoardView to the listener list of BoardViewModel
         boardViewModel.addPropertyChangeListener(boardView);
 
-        //repaint the board
-        repaintBoardController.execute(chariotBoard);
+        //start the game with a new board
+        boardView.restartTheGameWith(chariotBoard);
 
         this.setVisible(true);
     }
