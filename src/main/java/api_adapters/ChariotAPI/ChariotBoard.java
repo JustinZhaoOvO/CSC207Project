@@ -43,6 +43,7 @@ public class ChariotBoard implements ChariotAdaptorInterface {
      */
     @Override
     public boolean isPromotionMove(String move){
+        if (move.length() != 4) return false;
         String position = move.substring(0, 2);
         Board.Piece piece = this.board.get(position);
         return piece.type().equals(Board.PieceType.PAWN)
