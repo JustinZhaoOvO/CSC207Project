@@ -26,7 +26,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private List<String> validMoves;
 
-    private PiecesView[][] board;
+    private final PiecesView[][] board;
 
     private PiecesView mouseHoverOn;
 
@@ -42,9 +42,9 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private boolean MouseEventbanned;
 
-    private PromotionView blackPromotion;
+    private final PromotionView blackPromotion;
 
-    private PromotionView whitePromotion;
+    private final PromotionView whitePromotion;
 
     public BoardView() {
 
