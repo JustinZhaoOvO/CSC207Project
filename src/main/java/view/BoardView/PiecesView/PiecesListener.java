@@ -3,7 +3,6 @@ package view.BoardView.PiecesView;
 
 
 import view.BoardView.BoardView;
-import view.BoardView.ColorConstants;
 import view.BoardView.MouseListenerAdapter;
 
 import java.awt.*;

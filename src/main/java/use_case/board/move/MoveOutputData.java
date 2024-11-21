@@ -4,6 +4,7 @@ package use_case.board.move;
 import api_adapters.ChariotAPI.ChariotBoard;
 import view.BoardView.PiecesView.PiecesView;
 
-public record MoveOutputData(boolean repaint, boolean select, ChariotBoard board, PiecesView piecesView) {
+public record MoveOutputData(boolean repaint, boolean select, boolean promotion,
+                             ChariotBoard board, PiecesView piecesView) {
 
 }

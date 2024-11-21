@@ -49,6 +49,7 @@ public class ViewTest extends JFrame{
 
         //create the board object
         ChariotBoard chariotBoard = new ChariotBoard();
+//        chariotBoard.move("a2a4 b7b5 a4b5 a7a6 b5a6 b8c6 a6a7 c6b8"); //Move Pawn to the second row
 
         //initialize the controllers
         BoardViewModel boardViewModel = new BoardViewModel();
@@ -60,7 +61,7 @@ public class ViewTest extends JFrame{
         SelectInteractor selectInteractor = new SelectInteractor(selectPresenter);
         SelectController selectController = new SelectController(selectInteractor);
 
-        MovePresenter movePresenter = new MovePresenter(repaintBoardController, selectController);
+        MovePresenter movePresenter = new MovePresenter(boardViewModel,repaintBoardController, selectController);
         MoveInteractor moveInteractor = new MoveInteractor(movePresenter);
         MoveController moveController = new MoveController(moveInteractor);
 

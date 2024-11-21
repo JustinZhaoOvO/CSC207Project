@@ -6,5 +6,5 @@ public class BoardStateConstants {
 
     public static final String SELECT = "Select";
 
-    public static final String MOVE = "Move";
+    public static final String PROMOTION = "Promotion";
 }

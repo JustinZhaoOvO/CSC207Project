@@ -14,10 +14,19 @@ public class BoardState {
 
     private List<String> validMoves;
 
+    private boolean blackTurn;
+
 
     public BoardState() {
     }
 
+    public boolean isBlackTurn() {
+        return blackTurn;
+    }
+
+    public void setBlackTurn(boolean blackTurn) {
+        this.blackTurn = blackTurn;
+    }
 
     public PiecesView getSelected() {
         return selected;

@@ -19,7 +19,10 @@ public class BoardLayout extends LayoutAdapter {
                     PiecesView piecesView = board[i][j];
                     piecesView.setBounds(j * len, i *len , len, len);
                 }
-            }
+            }int len2 = len * 2;
+            int len4 = len * 4;
+            boardView.getBlackPromotion().setBounds(len2, len2, len4, len4);
+            boardView.getWhitePromotion().setBounds(len2, len2, len4, len4);
         }
     }
 }

@@ -4,9 +4,6 @@ package use_case.board.move;
 
 import api_adapters.ChariotAPI.ChariotBoard;
 import chariot.util.Board;
-import interface_adapter.board.repaintboard.RepaintBoardController;
-import interface_adapter.board.select.SelectController;
-import use_case.board.select.SelectOutputData;
 import view.BoardView.PiecesView.PiecesView;
 
 import java.util.List;
@@ -27,22 +24,20 @@ public class MoveInteractor implements MoveInputBoundary{
         Board.Piece piece = board.getPieceAt(piecesView.getCoordinate());
         List<String> validMoves = data.validMoves();
         String move;
+        MoveOutputData moveOutputData;
         if (piece != null && ((board.isBlackToMove() && piece.color() == Board.Side.BLACK)
                 || (!board.isBlackToMove() && piece.color() == Board.Side.WHITE))) {
-            MoveOutputData moveOutputData = new MoveOutputData(true, true, board, piecesView);
-            presenter.prepareSuccessView(moveOutputData);
+            moveOutputData = new MoveOutputData(true, true, false, board, piecesView);
         }else if (!(move = findValidMoves(validMoves, piecesView)).isEmpty()){
             if (board.isPromotionMove(move)){
-                //Promotion
+                moveOutputData = new MoveOutputData(false, false, true, board, piecesView);
             }else{
                 board.move(move);
-                MoveOutputData moveOutputData = new MoveOutputData(true, false, board, piecesView);
-                presenter.prepareSuccessView(moveOutputData);
+                moveOutputData = new MoveOutputData(true, false, false, board, piecesView);
             }
         }else {
-            MoveOutputData moveOutputData = new MoveOutputData(true, false, board, piecesView);
-            presenter.prepareSuccessView(moveOutputData);
-        }
+            moveOutputData = new MoveOutputData(true, false, false, board, piecesView);
+        }presenter.prepareSuccessView(moveOutputData);
     }
 
     private String findValidMoves(List<String> validMoves, PiecesView piecesView) {

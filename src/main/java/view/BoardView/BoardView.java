@@ -11,11 +11,13 @@ import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.select.SelectController;
 import view.BoardView.PiecesView.PiecesListener;
 import view.BoardView.PiecesView.PiecesView;
+import view.BoardView.PromotionView.PromotionLayout;
+import view.BoardView.PromotionView.PromotionView;
 
 import javax.swing.*;
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BoardView extends JPanel implements PropertyChangeListener {
@@ -36,9 +38,28 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private ChariotBoard chariotBoard;
 
+    private PiecesView lastClick;
+
+    private boolean MouseEventbanned;
+
+    private PromotionView blackPromotion;
+
+    private PromotionView whitePromotion;
+
     public BoardView() {
 
+        //add Promotion Components
+        this.blackPromotion = new PromotionView(true, this);
+        this.whitePromotion = new PromotionView(false, this);
+        this.blackPromotion.setLayout(new PromotionLayout());
+        this.whitePromotion.setLayout(new PromotionLayout());
+        this.add(this.blackPromotion);
+        this.add(this.whitePromotion);
+        this.blackPromotion.setVisible(false);
+        this.whitePromotion.setVisible(false);
+
         this.board = new PiecesView[BoardConstants.SIZEOFABOARD][BoardConstants.SIZEOFABOARD];
+
         //add Pieces component to the Board component
         for (int i = 0; i < BoardConstants.SIZEOFABOARD; i++){
             for (int j = 0; j < BoardConstants.SIZEOFABOARD; j++){
@@ -49,6 +70,16 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                 this.board[i][j] = piecesView;
             }
         }
+
+
+    }
+
+    public PromotionView getBlackPromotion() {
+        return blackPromotion;
+    }
+
+    public PromotionView getWhitePromotion() {
+        return whitePromotion;
     }
 
     public void restartTheGameWith(ChariotBoard chariotBoard) {
@@ -70,7 +101,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void mouseEnterPiece(PiecesView p){
-
+        if (MouseEventbanned) return;
         if (this.mouseHoverOn != null){
             this.mouseHoverOn.setHovered(false);
         }if (p != null){
@@ -78,11 +109,6 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
         this.mouseHoverOn = p;
         this.repaint();
-    }
-
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
     }
 
     @Override
@@ -97,8 +123,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             }
         }else if (propertyName.equals(BoardStateConstants.SELECT)) {
             selectHelper(newValue);
-        }else if (propertyName.equals(BoardStateConstants.MOVE)) {
-
+        }else if (propertyName.equals(BoardStateConstants.PROMOTION)) {
+            setPromotionComponentVisible(newValue.isBlackTurn());
         }
     }
 
@@ -139,7 +165,28 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
     }
 
+    public void setPromotionComponentVisible(boolean isBlack){
+        MouseEventbanned = true;
+        if (isBlack){
+            this.blackPromotion.setVisible(true);
+        }else {
+            this.whitePromotion.setVisible(true);
+        }
+    }
+
+    public void promoteTo(String type) {
+        MouseEventbanned = false;
+        this.blackPromotion.setVisible(false);
+        this.whitePromotion.setVisible(false);
+        String move = selected.getCoordinate().toString() + lastClick.getCoordinate().toString() + type;
+        ArrayList<String> newValidMove = new ArrayList<>();
+        newValidMove.add(move);
+        moveController.execute(this.chariotBoard, lastClick, newValidMove);
+    }
+
     public void clickOn(PiecesView p) {
+        if (MouseEventbanned) return;
+        lastClick = p;
         if (selected != null){
             moveController.execute(this.chariotBoard, p, this.validMoves);
         }else {
