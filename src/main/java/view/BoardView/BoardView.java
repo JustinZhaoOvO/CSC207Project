@@ -115,16 +115,16 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         String propertyName = evt.getPropertyName();
         BoardState newValue = (BoardState) evt.getNewValue();
-        if (propertyName.equals(BoardStateConstants.REPAINT)) {
-            if (newValue.getRepaintSuccess()){
-                repaintBoard(newValue);
-            }else {
-                JOptionPane.showMessageDialog(this, "Repainting the board failed");
+        switch (propertyName) {
+            case BoardStateConstants.REPAINT -> {
+                if (newValue.getRepaintSuccess()) {
+                    repaintBoard(newValue);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Repainting the board failed");
+                }
             }
-        }else if (propertyName.equals(BoardStateConstants.SELECT)) {
-            selectHelper(newValue);
-        }else if (propertyName.equals(BoardStateConstants.PROMOTION)) {
-            setPromotionComponentVisible(newValue.isBlackTurn());
+            case BoardStateConstants.SELECT -> selectHelper(newValue);
+            case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
         }
     }
 
