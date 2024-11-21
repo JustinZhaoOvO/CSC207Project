@@ -28,19 +28,15 @@ public class Coordinate {
         return x == that.x && y == that.y;
     }
 
-    @Override
-    public int hashCode() {
-        int result = getX();
-        result = 100 * result + getY();
-        return result;
-    }
 
     @Override
     public String toString() {
-        return "Coordinate{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return ((char) (x + 'a')) + "" + ((char) ('8' - y));
+    }
+
+    public static Coordinate fromString(String s) {
+        if (s.length() != 2) return null;
+        return new Coordinate('8' - s.charAt(1), s.charAt(0) - 'a');
     }
 
 

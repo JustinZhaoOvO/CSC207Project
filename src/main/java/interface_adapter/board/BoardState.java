@@ -1,45 +1,47 @@
 package interface_adapter.board;
 //CreateTime: 2024-11-14 11:13 p.m.
 
-import entity.Cell;
+import view.BoardView.PiecesView.PiecesView;
+
+import java.util.List;
 
 public class BoardState {
     private Boolean repaintSuccess;
 
-    private Cell[][] cells;
+    private PiecesView[][] piecesViews;
 
-    private Boolean blackTurn;
+    private PiecesView selected;
 
-    private String selected;
+    private List<String> validMoves;
 
-    public boolean getBlackTurn() {
-        return blackTurn;
-    }
+    private boolean blackTurn;
 
-    public void reverseTurn() {
-        this.blackTurn = !this.blackTurn;
-    }
 
     public BoardState() {
     }
 
-    public String getSelected() {
+    public boolean isBlackTurn() {
+        return blackTurn;
+    }
+
+    public void setBlackTurn(boolean blackTurn) {
+        this.blackTurn = blackTurn;
+    }
+
+    public PiecesView getSelected() {
         return selected;
     }
-    public void setSelected(String selected) {
+
+    public void setSelected(PiecesView selected) {
         this.selected = selected;
     }
 
-    public void cleanSelected() {
-        this.selected = "";
+    public PiecesView[][] getPiecesViews() {
+        return this.piecesViews;
     }
 
-    public Cell[][] getCells() {
-        return cells;
-    }
-
-    public void setCells(Cell[][] cells) {
-        this.cells = cells;
+    public void setPiecesViews(PiecesView[][] piecesViews) {
+        this.piecesViews = piecesViews;
     }
 
     public void setRepaintSuccess(final Boolean repaintSuccess) {
@@ -48,5 +50,13 @@ public class BoardState {
 
     public Boolean getRepaintSuccess() {
         return repaintSuccess;
+    }
+
+    public List<String> getValidMoves() {
+        return validMoves;
+    }
+
+    public void setValidMoves(List<String> validMoves) {
+        this.validMoves = validMoves;
     }
 }
