@@ -10,9 +10,8 @@ public class BoardLayout extends LayoutAdapter {
 
     @Override
     public void layoutContainer(Container parent) {
-        if (parent instanceof BoardView){
+        if (parent instanceof BoardView boardView){
             int len = Math.min(parent.getHeight(), parent.getWidth()) / 8;
-            BoardView boardView = (BoardView) parent;
             PiecesView[][] board = boardView.getBoard();
             for (int i = 0; i < board.length; i++) {
                 for (int j = 0; j < board[i].length; j++) {

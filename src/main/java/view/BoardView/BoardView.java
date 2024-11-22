@@ -2,6 +2,7 @@ package view.BoardView;
 //CreateTime: 2024-11-11 10:26 a.m.
 
 import api_adapters.ChariotAPI.ChariotBoard;
+import chariot.util.Board;
 import entity.BoardConstants;
 import entity.Coordinate;
 import interface_adapter.BoardStateConstants;
@@ -14,6 +15,7 @@ import view.BoardView.PiecesView.PiecesView;
 import view.BoardView.PromotionView.PromotionLayout;
 import view.BoardView.PromotionView.PromotionView;
 
+import javax.management.StandardEmitterMBean;
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -84,6 +86,10 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     public void restartTheGameWith(ChariotBoard chariotBoard) {
         this.chariotBoard = chariotBoard;
+        this.selected = null;
+        this.validMoves = null;
+        this.MouseEventbanned = false;
+
         repaintBoardController.execute(chariotBoard);
     }
 
@@ -125,6 +131,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             }
             case BoardStateConstants.SELECT -> selectHelper(newValue);
             case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
+            case BoardStateConstants.GAMEOVER -> gameOver(newValue.isBlackTurn(), newValue.getGameState());
         }
     }
 
@@ -132,7 +139,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         return board;
     }
 
-    public void selectHelper(BoardState state) {
+    private void selectHelper(BoardState state) {
         this.selected = state.getSelected();
         this.validMoves = state.getValidMoves();
         selected.setSelected(true);
@@ -144,7 +151,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }this.repaint();
     }
 
-    public void repaintBoard(BoardState state) {
+    private void repaintBoard(BoardState state) {
 
         Boolean repaintSuccess = state.getRepaintSuccess();
 
@@ -165,7 +172,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
     }
 
-    public void setPromotionComponentVisible(boolean isBlack){
+    private void setPromotionComponentVisible(boolean isBlack){
         MouseEventbanned = true;
         if (isBlack){
             this.blackPromotion.setVisible(true);
@@ -191,6 +198,25 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             moveController.execute(this.chariotBoard, p, this.validMoves);
         }else {
             selectController.execute(this.chariotBoard, p);
+        }
+    }
+
+    private void gameOver(boolean isWhiteWin, Board.GameState state) {
+        this.MouseEventbanned = true;
+
+        //TODO : Update scores
+        switch (state) {
+            case Board.GameState.draw_by_fifty_move_rule,
+                 Board.GameState.draw_by_threefold_repetition,
+                 Board.GameState.stalemate:
+                JOptionPane.showMessageDialog(this, "Draw");
+                break;
+            case Board.GameState.checkmate:
+                if (isWhiteWin) {
+                    JOptionPane.showMessageDialog(this, "White win");
+                }else {
+                    JOptionPane.showMessageDialog(this, "Black win");
+                }
         }
     }
 }

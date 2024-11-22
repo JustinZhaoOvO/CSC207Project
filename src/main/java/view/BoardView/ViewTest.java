@@ -2,6 +2,7 @@ package view.BoardView;
 //CreateTime: 2024-11-14 4:04 p.m.
 
 import api_adapters.ChariotAPI.ChariotBoard;
+import chariot.util.Board;
 import interface_adapter.board.BoardViewModel;
 import interface_adapter.board.move.MoveController;
 import interface_adapter.board.move.MovePresenter;
@@ -49,7 +50,7 @@ public class ViewTest extends JFrame{
 
         //create the board object
         ChariotBoard chariotBoard = new ChariotBoard();
-//        chariotBoard.move("a2a4 b7b5 a4b5 a7a6 b5a6 b8c6 a6a7 c6b8"); //Move Pawn to the second row
+        chariotBoard.move("a2a4 b7b5 a4b5 a7a6 b5a6 b8c6 a6a7 c6b8"); //Move Pawn to the second row
 
         //initialize the controllers
         BoardViewModel boardViewModel = new BoardViewModel();
