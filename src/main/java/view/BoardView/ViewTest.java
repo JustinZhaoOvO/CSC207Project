@@ -21,7 +21,7 @@ import java.awt.*;
 
 public class ViewTest extends JFrame {
     private boolean isPaused = false; // Track pause state
-    private Timer switchTurnTimer;    // Make switchTurnTimer an instance variable
+    private Timer switchTurnTimer;    // Timer for switching turns
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ViewTest::new);
@@ -32,17 +32,17 @@ public class ViewTest extends JFrame {
         // Set up JFrame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Chess Game with Timer");
-        this.setSize(1200, 650);
-        this.setLocationRelativeTo(null);
+        this.setSize(1200, 650); // Expanded window size
+        this.setLocationRelativeTo(null); // Center the window
 
         // Initialize components
         BoardView boardView = new BoardView();
 
-        // Set up main window
+        // Set up main window panel
         JPanel window = new WindowView();
         window.setLayout(new BorderLayout());
         this.setContentPane(window);
-        window.setBackground(ColorConstants.LIGHTBLUE);
+        window.setBackground(ColorConstants.LIGHTBLUE); // Set background color
 
         // Add board to center
         window.add(boardView, BorderLayout.CENTER);
@@ -53,7 +53,7 @@ public class ViewTest extends JFrame {
                 boardView.add(
                         new PiecesView(
                                 (i + j) % 2 == 0 ? BoardConstants.EVENCELLCOLOR : BoardConstants.ODDCELLCOLOR,
-                                null
+                                null // Assuming pieces are not initialized here
                         ),
                         i,
                         j
@@ -70,7 +70,7 @@ public class ViewTest extends JFrame {
         RepaintBoardInteractor repaintBoardInteractor = new RepaintBoardInteractor(repaintBoardPresenter);
         RepaintBoardController repaintBoardController = new RepaintBoardController(repaintBoardInteractor);
 
-        // Add BoardView as listener
+        // Add BoardView as listener to BoardViewModel
         boardViewModel.addPropertyChangeListener(boardView);
 
         // Repaint the board
@@ -95,34 +95,36 @@ public class ViewTest extends JFrame {
 
         // Set up the pause button listener
         timerView.addPauseActionListener(e -> {
-            System.out.println("Pause/Start button clicked");
-            if (!isPaused) {
-                timerController.pauseGame();
-                isPaused = true;
-                // Pause the switchTurnTimer
-                if (switchTurnTimer != null) {
-                    switchTurnTimer.stop();
-                }
-                // Switch to start button icon
-                timerView.togglePauseButtonIcon(ImageConstants.STARTBUTTON);
-            } else {
-                timerController.resumeGame();
-                isPaused = false;
-                // Resume the switchTurnTimer
-                if (switchTurnTimer != null) {
-                    switchTurnTimer.start();
-                }
-                // Switch back to pause button icon
-                timerView.togglePauseButtonIcon(ImageConstants.PAUSEBUTTON);
+            System.out.println("Pause button clicked");
+            timerController.pauseGame();
+            isPaused = true;
+            // Pause the switchTurnTimer
+            if (switchTurnTimer != null) {
+                switchTurnTimer.stop();
             }
-            // Update paused state in TimerView
-            timerView.setPaused(isPaused);
+            // Show start button, hide pause button
+            timerView.showStartButton();
+        });
+
+        // Set up the start button listener
+        timerView.addStartActionListener(e -> {
+            System.out.println("Start button clicked");
+            timerController.resumeGame();
+            isPaused = false;
+            // Resume the switchTurnTimer
+            if (switchTurnTimer != null) {
+                switchTurnTimer.start();
+            }
+            // Show pause button, hide start button
+            timerView.showPauseButton();
         });
 
         // Initialize the switchTurnTimer
         switchTurnTimer = new Timer(5000, e -> {
-            System.out.println("Switching turn");
-            timerController.switchTurn();
+            if (!isPaused) { // Only switch turn if not paused
+                System.out.println("Switching turn");
+                timerController.switchTurn();
+            }
         });
         switchTurnTimer.start();
 
