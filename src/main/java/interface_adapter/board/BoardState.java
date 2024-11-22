@@ -1,6 +1,7 @@
 package interface_adapter.board;
 //CreateTime: 2024-11-14 11:13 p.m.
 
+import chariot.util.Board;
 import view.BoardView.PiecesView.PiecesView;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public class BoardState {
     private List<String> validMoves;
 
     private boolean blackTurn;
+
+    private Board.GameState gameState;
 
 
     public BoardState() {
@@ -58,5 +61,13 @@ public class BoardState {
 
     public void setValidMoves(List<String> validMoves) {
         this.validMoves = validMoves;
+    }
+
+    public Board.GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(Board.GameState gameState) {
+        this.gameState = gameState;
     }
 }

@@ -26,15 +26,24 @@ public class MovePresenter implements MoveOutputBoundary {
 
     @Override
     public void prepareSuccessView(MoveOutputData outputData) {
-        if (outputData.promotion()){
+        if (outputData.isPromotion()){
             BoardState boardState = new BoardState();
             boardState.setBlackTurn(outputData.board().isBlackToMove());
             boardViewModel.setState(boardState);
             boardViewModel.firePropertyChanged(BoardStateConstants.PROMOTION);
-        }if (outputData.repaint()){
+        }if (outputData.isRepaint()){
             repaintBoardController.execute(outputData.board());
-        }if (outputData.select()){
+        }if (outputData.isSelect()){
             selectController.execute(outputData.board(), outputData.piecesView());
+        }if (outputData.isGameOver()){
+            //TODO: stop timer
+
+
+            BoardState boardState = new BoardState();
+            boardState.setBlackTurn(outputData.board().isBlackToMove());
+            boardState.setGameState(outputData.getGameState());
+            boardViewModel.setState(boardState);
+            boardViewModel.firePropertyChanged(BoardStateConstants.GAMEOVER);
         }
     }
 

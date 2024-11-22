@@ -24,19 +24,27 @@ public class MoveInteractor implements MoveInputBoundary{
         Board.Piece piece = board.getPieceAt(piecesView.getCoordinate());
         List<String> validMoves = data.validMoves();
         String move;
-        MoveOutputData moveOutputData;
+        MoveOutputData moveOutputData = new MoveOutputData(board, piecesView);
         if (piece != null && ((board.isBlackToMove() && piece.color() == Board.Side.BLACK)
-                || (!board.isBlackToMove() && piece.color() == Board.Side.WHITE))) {
-            moveOutputData = new MoveOutputData(true, true, false, board, piecesView);
-        }else if (!(move = findValidMoves(validMoves, piecesView)).isEmpty()){
-            if (board.isPromotionMove(move)){
-                moveOutputData = new MoveOutputData(false, false, true, board, piecesView);
-            }else{
+                || (!board.isBlackToMove() && piece.color() == Board.Side.WHITE))) { // switch selected piece
+            moveOutputData.setRepaint(true);
+            moveOutputData.setSelect(true);
+
+        }else if (!(move = findValidMoves(validMoves, piecesView)).isEmpty()){ // a valid move
+            if (board.isPromotionMove(move)){   //promotion
+                moveOutputData.setPromotion(true);
+            }else{  //move
                 board.move(move);
-                moveOutputData = new MoveOutputData(true, false, false, board, piecesView);
+                moveOutputData.setRepaint(true);
+                //TODO: round change, reverse timer, record steps
+
+                if (board.ended()){ // game over
+                    moveOutputData.setGameOver(true);
+                    moveOutputData.setGameState(board.gameState());
+                }
             }
-        }else {
-            moveOutputData = new MoveOutputData(true, false, false, board, piecesView);
+        }else {   //invalid move
+            moveOutputData.setRepaint(true);
         }presenter.prepareSuccessView(moveOutputData);
     }
 
