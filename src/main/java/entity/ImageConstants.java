@@ -30,4 +30,8 @@ public class ImageConstants {
             new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/RookBlack.png"))).getImage();
     public static final Image WHITEROOK =
             new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/RookWhite.png"))).getImage();
+    public static final Image PAUSEBUTTON =
+            new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/PauseButton.png"))).getImage();
+    public static final Image STARTBUTTON =
+            new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/StartButton.png"))).getImage();
 }

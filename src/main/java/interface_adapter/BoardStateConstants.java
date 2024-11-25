@@ -3,4 +3,10 @@ package interface_adapter;
 
 public class BoardStateConstants {
     public static final String REPAINT = "Repaint";
+
+    public static final String SELECT = "Select";
+
+    public static final String PROMOTION = "Promotion";
+
+    public static final String GAMEOVER = "GameOver";
 }

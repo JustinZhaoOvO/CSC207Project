@@ -3,11 +3,7 @@ package use_case.board.repaintboard;
 
 
 import api_adapters.ChariotAPI.ChariotBoard;
-import use_case.board.BoardInputData;
 
-public class RepaintBoardInputData extends BoardInputData {
+public record RepaintBoardInputData(ChariotBoard board) {
 
-    public RepaintBoardInputData(ChariotBoard board) {
-        super(board);
-    }
 }
