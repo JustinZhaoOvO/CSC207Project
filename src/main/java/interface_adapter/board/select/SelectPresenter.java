@@ -19,7 +19,7 @@ public class SelectPresenter implements SelectOutputBoundary {
     @Override
     public void prepareSuccessView(SelectOutputData outputData) {
         BoardState boardState = new BoardState();
-        boardState.setSelected(outputData.piecesView());
+        boardState.setSelected(outputData.coordinate());
         boardState.setValidMoves(outputData.validMoves());
         viewModel.setState(boardState);
         viewModel.firePropertyChanged(BoardStateConstants.SELECT);

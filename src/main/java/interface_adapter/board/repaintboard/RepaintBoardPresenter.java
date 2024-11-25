@@ -26,11 +26,8 @@ public class RepaintBoardPresenter implements RepaintBoardOutputBoundary {
         viewModel.firePropertyChanged(BoardStateConstants.REPAINT);
     }
 
-@Override
-public void prepareFailView(String errorMessage) {
-    BoardState boardState = new BoardState();
-    boardState.setRepaintSuccess(false);
-    viewModel.setState(boardState);
-    viewModel.firePropertyChanged(BoardStateConstants.REPAINT);
-}
+    @Override
+    public void prepareFailView(String errorMessage) {
+
+    }
 }

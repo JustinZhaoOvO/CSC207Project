@@ -11,21 +11,6 @@ import java.awt.*;
 public class ChariotDataParser {
 
 
-    public static int[] parsingAPosition(String pos){
-        //len(pos) == 2 & pos is a coordinate at chessboard, e.g. e1, g2
-        int[] ans = new int[2];
-        ans[0] = pos.charAt(0) - BoardConstants.UPPERLEFTLETTER;
-        ans[1] = BoardConstants.UPPERLEFTNUMBER - pos.charAt(1);
-        return ans;
-    }
-
-    public static String parsingACoordinate(int[] coord){
-        String ans = "";
-        ans += coord[0] + BoardConstants.UPPERLEFTLETTER;
-        ans += BoardConstants.UPPERLEFTNUMBER - coord[1];
-        return ans;
-    }
-
     public static PiecesView[][] parsingABoard(String board){
         PiecesView[][] ans = new PiecesView[BoardConstants.SIZEOFABOARD][BoardConstants.SIZEOFABOARD];
         String[] rows = board.split("\n");

@@ -4,11 +4,12 @@ package use_case.board.select;
 
 import api_adapters.ChariotAPI.ChariotBoard;
 import chariot.util.Board;
+import entity.Coordinate;
 import view.BoardView.PiecesView.PiecesView;
 
 public class SelectInteractor implements SelectInputBoundary{
 
-    private SelectOutputBoundary presenter;
+    private final SelectOutputBoundary presenter;
 
     public SelectInteractor(SelectOutputBoundary presenter) {
 
@@ -19,13 +20,13 @@ public class SelectInteractor implements SelectInputBoundary{
     @Override
     public void execute(SelectInputData data) {
         ChariotBoard board = data.board();
-        PiecesView piecesView = data.piecesView();
-        Board.Piece piece = board.getPieceAt(piecesView.getCoordinate());
+        Coordinate coordinate = data.coordinate();
+        Board.Piece piece = board.getPieceAt(coordinate);
         if (piece == null) return;
         if ((board.isBlackToMove() && piece.color() == Board.Side.BLACK)
                 || (!board.isBlackToMove() && piece.color() == Board.Side.WHITE)) {
-            presenter.prepareSuccessView(new SelectOutputData(piecesView,
-                    board.getValidMovesOfPosition(piecesView.getCoordinate().toString())));
+            presenter.prepareSuccessView(new SelectOutputData(coordinate,
+                    board.getValidMovesOfPosition(coordinate.toString())));
         }
     }
 }

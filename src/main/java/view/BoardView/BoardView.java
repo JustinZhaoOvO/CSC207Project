@@ -15,7 +15,6 @@ import view.BoardView.PiecesView.PiecesView;
 import view.BoardView.PromotionView.PromotionLayout;
 import view.BoardView.PromotionView.PromotionView;
 
-import javax.management.StandardEmitterMBean;
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardView extends JPanel implements PropertyChangeListener {
+
+    private final String viewName = "chessboard";
 
     private PiecesView selected;
 
@@ -140,14 +141,15 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     private void selectHelper(BoardState state) {
-        this.selected = state.getSelected();
+        Coordinate coor = state.getSelected();
+        this.selected = board[coor.y()][coor.x()];
         this.validMoves = state.getValidMoves();
         selected.setSelected(true);
         for (String validMove : validMoves) {
             String stringCoordinate = validMove.substring(2, 4);// a UCI move is like f5a1
             Coordinate coordinate = Coordinate.fromString(stringCoordinate);
             assert coordinate != null;
-            board[coordinate.getY()][coordinate.getX()].setValidMoveToHere(true);
+            board[coordinate.y()][coordinate.x()].setValidMoveToHere(true);
         }this.repaint();
     }
 
@@ -167,8 +169,6 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     }
                 }
             }this.repaint();
-        }else {
-            JOptionPane.showMessageDialog(this, "Repaint Failed");
         }
     }
 
@@ -188,23 +188,24 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         String move = selected.getCoordinate().toString() + lastClick.getCoordinate().toString() + type;
         ArrayList<String> newValidMove = new ArrayList<>();
         newValidMove.add(move);
-        moveController.execute(this.chariotBoard, lastClick, newValidMove);
+        moveController.execute(this.chariotBoard, lastClick.getCoordinate(), newValidMove);
     }
 
     public void clickOn(PiecesView p) {
         if (MouseEventbanned) return;
         lastClick = p;
         if (selected != null){
-            moveController.execute(this.chariotBoard, p, this.validMoves);
+            moveController.execute(this.chariotBoard, p.getCoordinate(), this.validMoves);
         }else {
-            selectController.execute(this.chariotBoard, p);
+            selectController.execute(this.chariotBoard, p.getCoordinate());
         }
     }
 
     private void gameOver(boolean isWhiteWin, Board.GameState state) {
         this.MouseEventbanned = true;
 
-        //TODO : Update scores
+        //TODO : Update scores & clear records
+
         switch (state) {
             case Board.GameState.draw_by_fifty_move_rule,
                  Board.GameState.draw_by_threefold_repetition,
@@ -218,5 +219,17 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     JOptionPane.showMessageDialog(this, "Black win");
                 }
         }
+    }
+
+    public void freezeBoard(){
+        this.MouseEventbanned = true;
+    }
+
+    public void unfreezeBoard(){
+        this.MouseEventbanned = false;
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }
