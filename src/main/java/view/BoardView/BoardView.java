@@ -89,7 +89,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         this.chariotBoard = chariotBoard;
         this.selected = null;
         this.validMoves = null;
-        this.MouseEventbanned = false;
+        unfreezeBoard();
 
         repaintBoardController.execute(chariotBoard);
     }
@@ -206,19 +206,30 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
         //TODO : Update scores & clear records
 
-        switch (state) {
-            case Board.GameState.draw_by_fifty_move_rule,
-                 Board.GameState.draw_by_threefold_repetition,
-                 Board.GameState.stalemate:
-                JOptionPane.showMessageDialog(this, "Draw");
-                break;
-            case Board.GameState.checkmate:
+        if (state == Board.GameState.draw_by_fifty_move_rule) {
+            JOptionPane.showMessageDialog(this, "Draw by fifty move rule");
+        }else if (state == Board.GameState.draw_by_threefold_repetition) {
+            JOptionPane.showMessageDialog(this, "Draw by three fold repetition");
+        }else if (state == Board.GameState.stalemate) {
+
+            JOptionPane.showMessageDialog(this, "Draw by stalemate");
+        }else if (state == Board.GameState.checkmate){
                 if (isWhiteWin) {
-                    JOptionPane.showMessageDialog(this, "White win");
+                    JOptionPane.showMessageDialog(this, "Checkmate! White win");
                 }else {
-                    JOptionPane.showMessageDialog(this, "Black win");
+                    JOptionPane.showMessageDialog(this, "Checkmate! Black win");
                 }
+        }else {
+            if (isWhiteWin){
+                JOptionPane.showMessageDialog(this, "Black forfeited! White win");
+            }else {
+                JOptionPane.showMessageDialog(this, "White forfeited! Black win");
+            }
         }
+    }
+
+    public void forfeit(){
+        gameOver(chariotBoard.isBlackToMove(), Board.GameState.ongoing);
     }
 
     public void freezeBoard(){
