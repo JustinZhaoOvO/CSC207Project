@@ -18,18 +18,19 @@ public class RepaintBoardPresenter implements RepaintBoardOutputBoundary {
 
     @Override
     public void prepareSuccessView(RepaintBoardOutputData outputData) {
+
         BoardState boardState = new BoardState();
-        boardState.setCells(outputData.getBoard());
+        boardState.setPiecesViews(outputData.board());
         boardState.setRepaintSuccess(true);
         viewModel.setState(boardState);
         viewModel.firePropertyChanged(BoardStateConstants.REPAINT);
     }
 
-    @Override
-    public void prepareFailView(String errorMessage) {
-        BoardState boardState = new BoardState();
-        boardState.setRepaintSuccess(false);
-        viewModel.setState(boardState);
-        viewModel.firePropertyChanged(BoardStateConstants.REPAINT);
-    }
+@Override
+public void prepareFailView(String errorMessage) {
+    BoardState boardState = new BoardState();
+    boardState.setRepaintSuccess(false);
+    viewModel.setState(boardState);
+    viewModel.firePropertyChanged(BoardStateConstants.REPAINT);
+}
 }
