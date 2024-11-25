@@ -3,6 +3,7 @@ package use_case.board.move;
 
 import api_adapters.ChariotAPI.ChariotBoard;
 import chariot.util.Board;
+import entity.Coordinate;
 import view.BoardView.PiecesView.PiecesView;
 
 public class MoveOutputData {
@@ -13,11 +14,11 @@ public class MoveOutputData {
     private boolean gameOver;
     private Board.GameState gameState;
     private final ChariotBoard board;
-    private final PiecesView piecesView;
+    private final Coordinate coordinate;
 
-    public MoveOutputData(ChariotBoard board, PiecesView piecesView) {
+    public MoveOutputData(ChariotBoard board, Coordinate coordinate) {
         this.board = board;
-        this.piecesView = piecesView;
+        this.coordinate = coordinate;
     }
 
     public boolean isRepaint() {
@@ -48,10 +49,6 @@ public class MoveOutputData {
         return board;
     }
 
-    public PiecesView piecesView() {
-        return piecesView;
-    }
-
     public boolean isGameOver() {
         return gameOver;
     }
@@ -66,5 +63,9 @@ public class MoveOutputData {
 
     public void setGameState(Board.GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 }

@@ -2,6 +2,7 @@ package interface_adapter.board;
 //CreateTime: 2024-11-14 11:13 p.m.
 
 import chariot.util.Board;
+import entity.Coordinate;
 import view.BoardView.PiecesView.PiecesView;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public class BoardState {
 
     private PiecesView[][] piecesViews;
 
-    private PiecesView selected;
+    private Coordinate selected;
 
     private List<String> validMoves;
 
@@ -31,11 +32,11 @@ public class BoardState {
         this.blackTurn = blackTurn;
     }
 
-    public PiecesView getSelected() {
+    public Coordinate getSelected() {
         return selected;
     }
 
-    public void setSelected(PiecesView selected) {
+    public void setSelected(Coordinate selected) {
         this.selected = selected;
     }
 
