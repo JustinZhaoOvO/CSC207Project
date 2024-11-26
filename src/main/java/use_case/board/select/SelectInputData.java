@@ -1,9 +1,9 @@
 package use_case.board.select;
 //CreateTime: 2024-11-20 3:14 p.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
-import view.BoardView.PiecesView.PiecesView;
+import entity.ChariotBoard;
+import entity.Coordinate;
 
-public record SelectInputData(ChariotBoard board, PiecesView piecesView) {
+public record SelectInputData(ChariotBoard board, Coordinate coordinate) {
 
 }

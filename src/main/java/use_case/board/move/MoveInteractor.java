@@ -2,15 +2,16 @@ package use_case.board.move;
 //CreateTime: 2024-11-20 3:14 p.m.
 
 
-import api_adapters.ChariotAPI.ChariotBoard;
+import entity.ChariotBoard;
 import chariot.util.Board;
-import view.BoardView.PiecesView.PiecesView;
+import entity.Coordinate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class MoveInteractor implements MoveInputBoundary{
 
-    private MoveOutputBoundary presenter;
+    private final MoveOutputBoundary presenter;
 
     public MoveInteractor(MoveOutputBoundary presenter) {
 
@@ -20,17 +21,17 @@ public class MoveInteractor implements MoveInputBoundary{
     @Override
     public void execute(MoveInputData data) {
         ChariotBoard board = data.board();
-        PiecesView piecesView = data.piecesView();
-        Board.Piece piece = board.getPieceAt(piecesView.getCoordinate());
+        Coordinate coordinate = data.coordinate();
+        Board.Piece piece = board.getPieceAt(coordinate);
         List<String> validMoves = data.validMoves();
         String move;
-        MoveOutputData moveOutputData = new MoveOutputData(board, piecesView);
+        MoveOutputData moveOutputData = new MoveOutputData(board, coordinate);
         if (piece != null && ((board.isBlackToMove() && piece.color() == Board.Side.BLACK)
                 || (!board.isBlackToMove() && piece.color() == Board.Side.WHITE))) { // switch selected piece
             moveOutputData.setRepaint(true);
             moveOutputData.setSelect(true);
 
-        }else if (!(move = findValidMoves(validMoves, piecesView)).isEmpty()){ // a valid move
+        }else if (!(move = findValidMoves(validMoves, coordinate)).isEmpty()){ // a valid move
             if (board.isPromotionMove(move)){   //promotion
                 moveOutputData.setPromotion(true);
             }else{  //move
@@ -40,7 +41,7 @@ public class MoveInteractor implements MoveInputBoundary{
 
                 if (board.ended()){ // game over
                     moveOutputData.setGameOver(true);
-                    moveOutputData.setGameState(board.gameState());
+                    moveOutputData.setMsg(getString(board.gameState(), board.isBlackToMove()));
                 }
             }
         }else {   //invalid move
@@ -48,8 +49,27 @@ public class MoveInteractor implements MoveInputBoundary{
         }presenter.prepareSuccessView(moveOutputData);
     }
 
-    private String findValidMoves(List<String> validMoves, PiecesView piecesView) {
-        String stringCoordinate = piecesView.getCoordinate().toString();
+    @NotNull
+    private static String getString(Board.GameState state, boolean blackToMove) {
+        String msg = "ERROR : Game End by Unknown Error";
+        if (state == Board.GameState.draw_by_fifty_move_rule) {
+            msg = "Draw by fifty move rule";
+        }else if (state == Board.GameState.draw_by_threefold_repetition) {
+            msg = "Draw by three fold repetition";
+        }else if (state == Board.GameState.stalemate) {
+            msg = "Draw by stalemate";
+        }else if (state == Board.GameState.checkmate) {
+            if (blackToMove) {
+                msg = "Checkmate! White win";
+            }else {
+                msg = "Checkmate! Black win";
+            }
+        }
+        return msg;
+    }
+
+    private String findValidMoves(List<String> validMoves, Coordinate coordinate) {
+        String stringCoordinate = coordinate.toString();
         for (String validMove : validMoves) {
             if (validMove.substring(2, 4).equals(stringCoordinate)) {
                 return validMove;

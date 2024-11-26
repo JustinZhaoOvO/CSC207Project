@@ -1,13 +1,12 @@
-package api_adapters.ChariotAPI;
+package entity;
 //CreateTime: 2024-11-10 7:10 p.m.
 
 import chariot.util.Board;
-import entity.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChariotBoard implements ChariotAdaptorInterface {
+public class ChariotBoard {
     private Board board;
 
     public ChariotBoard() {
@@ -41,7 +40,6 @@ public class ChariotBoard implements ChariotAdaptorInterface {
      * @param move : A move in UCI
      * @return : A Pawn Promotion or not
      */
-    @Override
     public boolean isPromotionMove(String move){
         if (move.length() != 4) return false;
         String position = move.substring(0, 2);
@@ -59,17 +57,14 @@ public class ChariotBoard implements ChariotAdaptorInterface {
         this.board = this.board.play(movesToPlay);
     }
 
-    @Override
     public boolean ended() {
         return this.board.ended();
     }
 
-    @Override
     public Board.GameState gameState() {
         return this.board.gameState();
     }
 
-    @Override
     public boolean isBlackToMove() {
         return this.board.blackToMove();
     }

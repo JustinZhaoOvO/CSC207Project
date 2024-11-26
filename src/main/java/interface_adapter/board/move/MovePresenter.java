@@ -34,14 +34,14 @@ public class MovePresenter implements MoveOutputBoundary {
         }if (outputData.isRepaint()){
             repaintBoardController.execute(outputData.board());
         }if (outputData.isSelect()){
-            selectController.execute(outputData.board(), outputData.piecesView());
+            selectController.execute(outputData.board(), outputData.getCoordinate());
         }if (outputData.isGameOver()){
             //TODO: stop timer
 
-
             BoardState boardState = new BoardState();
             boardState.setBlackTurn(outputData.board().isBlackToMove());
-            boardState.setGameState(outputData.getGameState());
+            boardState.setMsg(outputData.getMsg());
+
             boardViewModel.setState(boardState);
             boardViewModel.firePropertyChanged(BoardStateConstants.GAMEOVER);
         }

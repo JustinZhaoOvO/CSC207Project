@@ -33,4 +33,13 @@ public class SignupController {
     public void switchToLoginView() {
         userSignupUseCaseInteractor.switchToLoginView();
     }
+
+    /**
+     * Starts the game with two players.
+     * @param player1 the username of Player 1
+     * @param player2 the username of Player 2
+     */
+    public void startGameWithPlayers(String player1, String player2) {
+        userSignupUseCaseInteractor.startGameWithPlayers(player1, player2);
+    }
 }

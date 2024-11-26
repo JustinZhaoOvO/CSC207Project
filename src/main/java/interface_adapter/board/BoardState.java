@@ -2,6 +2,7 @@ package interface_adapter.board;
 //CreateTime: 2024-11-14 11:13 p.m.
 
 import chariot.util.Board;
+import entity.Coordinate;
 import view.BoardView.PiecesView.PiecesView;
 
 import java.util.List;
@@ -9,15 +10,16 @@ import java.util.List;
 public class BoardState {
     private Boolean repaintSuccess;
 
+    private String msg;
+
     private PiecesView[][] piecesViews;
 
-    private PiecesView selected;
+    private Coordinate selected;
 
     private List<String> validMoves;
 
     private boolean blackTurn;
 
-    private Board.GameState gameState;
 
 
     public BoardState() {
@@ -31,11 +33,11 @@ public class BoardState {
         this.blackTurn = blackTurn;
     }
 
-    public PiecesView getSelected() {
+    public Coordinate getSelected() {
         return selected;
     }
 
-    public void setSelected(PiecesView selected) {
+    public void setSelected(Coordinate selected) {
         this.selected = selected;
     }
 
@@ -63,11 +65,12 @@ public class BoardState {
         this.validMoves = validMoves;
     }
 
-    public Board.GameState getGameState() {
-        return gameState;
+
+    public String getMsg() {
+        return msg;
     }
 
-    public void setGameState(Board.GameState gameState) {
-        this.gameState = gameState;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }

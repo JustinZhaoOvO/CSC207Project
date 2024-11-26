@@ -22,4 +22,9 @@ public class SignupViewModel extends ViewModel<SignupState> {
         setState(new SignupState());
     }
 
+    public void resetState() {
+        SignupState defaultState = new SignupState(); // Create a new default state
+        setState(defaultState); // Update the ViewModel's state and notify listeners
+    }
+
 }

@@ -40,4 +40,10 @@ public class SignupInteractor implements SignupInputBoundary {
     public void switchToLoginView() {
         userPresenter.switchToLoginView();
     }
+
+    @Override
+    public void startGameWithPlayers(String player1, String player2) {
+        // Notify the presenter to transition to the game view
+        userPresenter.prepareGameStart(player1, player2);
+    }
 }

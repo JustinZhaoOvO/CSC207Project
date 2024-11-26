@@ -15,4 +15,6 @@ public interface SignupInputBoundary {
      * Executes the switch to login view use case.
      */
     void switchToLoginView();
+
+    void startGameWithPlayers(String player1, String player2);
 }

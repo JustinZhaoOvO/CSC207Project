@@ -21,4 +21,6 @@ public interface SignupOutputBoundary {
      * Switches to the Login View.
      */
     void switchToLoginView();
+
+    void prepareGameStart(String player1, String player2);
 }

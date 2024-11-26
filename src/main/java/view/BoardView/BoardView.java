@@ -1,8 +1,7 @@
 package view.BoardView;
 //CreateTime: 2024-11-11 10:26 a.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
-import chariot.util.Board;
+import entity.ChariotBoard;
 import entity.BoardConstants;
 import entity.Coordinate;
 import interface_adapter.BoardStateConstants;
@@ -15,7 +14,6 @@ import view.BoardView.PiecesView.PiecesView;
 import view.BoardView.PromotionView.PromotionLayout;
 import view.BoardView.PromotionView.PromotionView;
 
-import javax.management.StandardEmitterMBean;
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardView extends JPanel implements PropertyChangeListener {
+
+    private final String viewName = "chessboard";
 
     private PiecesView selected;
 
@@ -47,6 +47,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     private final PromotionView blackPromotion;
 
     private final PromotionView whitePromotion;
+
+    private boolean Paused;
 
     public BoardView() {
 
@@ -88,6 +90,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         this.chariotBoard = chariotBoard;
         this.selected = null;
         this.validMoves = null;
+        this.Paused = false;
         this.MouseEventbanned = false;
 
         repaintBoardController.execute(chariotBoard);
@@ -107,7 +110,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void mouseEnterPiece(PiecesView p){
-        if (MouseEventbanned) return;
+        if (MouseEventbanned || Paused) return;
         if (this.mouseHoverOn != null){
             this.mouseHoverOn.setHovered(false);
         }if (p != null){
@@ -131,7 +134,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             }
             case BoardStateConstants.SELECT -> selectHelper(newValue);
             case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
-            case BoardStateConstants.GAMEOVER -> gameOver(newValue.isBlackTurn(), newValue.getGameState());
+            case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
         }
     }
 
@@ -140,14 +143,15 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     private void selectHelper(BoardState state) {
-        this.selected = state.getSelected();
+        Coordinate coor = state.getSelected();
+        this.selected = board[coor.y()][coor.x()];
         this.validMoves = state.getValidMoves();
         selected.setSelected(true);
         for (String validMove : validMoves) {
             String stringCoordinate = validMove.substring(2, 4);// a UCI move is like f5a1
             Coordinate coordinate = Coordinate.fromString(stringCoordinate);
             assert coordinate != null;
-            board[coordinate.getY()][coordinate.getX()].setValidMoveToHere(true);
+            board[coordinate.y()][coordinate.x()].setValidMoveToHere(true);
         }this.repaint();
     }
 
@@ -167,8 +171,6 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     }
                 }
             }this.repaint();
-        }else {
-            JOptionPane.showMessageDialog(this, "Repaint Failed");
         }
     }
 
@@ -188,35 +190,39 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         String move = selected.getCoordinate().toString() + lastClick.getCoordinate().toString() + type;
         ArrayList<String> newValidMove = new ArrayList<>();
         newValidMove.add(move);
-        moveController.execute(this.chariotBoard, lastClick, newValidMove);
+        moveController.execute(this.chariotBoard, lastClick.getCoordinate(), newValidMove);
     }
 
     public void clickOn(PiecesView p) {
-        if (MouseEventbanned) return;
+        if (MouseEventbanned || Paused) return;
         lastClick = p;
         if (selected != null){
-            moveController.execute(this.chariotBoard, p, this.validMoves);
+            moveController.execute(this.chariotBoard, p.getCoordinate(), this.validMoves);
         }else {
-            selectController.execute(this.chariotBoard, p);
+            selectController.execute(this.chariotBoard, p.getCoordinate());
         }
     }
 
-    private void gameOver(boolean isWhiteWin, Board.GameState state) {
+    private void gameOver(String msg) {
         this.MouseEventbanned = true;
 
-        //TODO : Update scores
-        switch (state) {
-            case Board.GameState.draw_by_fifty_move_rule,
-                 Board.GameState.draw_by_threefold_repetition,
-                 Board.GameState.stalemate:
-                JOptionPane.showMessageDialog(this, "Draw");
-                break;
-            case Board.GameState.checkmate:
-                if (isWhiteWin) {
-                    JOptionPane.showMessageDialog(this, "White win");
-                }else {
-                    JOptionPane.showMessageDialog(this, "Black win");
-                }
-        }
+        //TODO : Update scores & clear records
+        JOptionPane.showMessageDialog(this, msg);
+    }
+
+    public void forfeit(){
+        gameOver(chariotBoard.isBlackToMove() ?  "Black forfeited! White win" : "White forfeited! Black win");
+    }
+
+    public void freezeBoard(){
+        this.Paused = true;
+    }
+
+    public void unfreezeBoard(){
+        this.Paused = false;
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 }
