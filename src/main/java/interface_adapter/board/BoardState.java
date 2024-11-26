@@ -10,6 +10,8 @@ import java.util.List;
 public class BoardState {
     private Boolean repaintSuccess;
 
+    private String msg;
+
     private PiecesView[][] piecesViews;
 
     private Coordinate selected;
@@ -18,7 +20,6 @@ public class BoardState {
 
     private boolean blackTurn;
 
-    private Board.GameState gameState;
 
 
     public BoardState() {
@@ -64,11 +65,12 @@ public class BoardState {
         this.validMoves = validMoves;
     }
 
-    public Board.GameState getGameState() {
-        return gameState;
+
+    public String getMsg() {
+        return msg;
     }
 
-    public void setGameState(Board.GameState gameState) {
-        this.gameState = gameState;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }

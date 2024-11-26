@@ -2,16 +2,16 @@ package use_case.board.move;
 //CreateTime: 2024-11-20 3:14 p.m.
 
 
-import api_adapters.ChariotAPI.ChariotBoard;
+import entity.ChariotBoard;
 import chariot.util.Board;
 import entity.Coordinate;
-import view.BoardView.PiecesView.PiecesView;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class MoveInteractor implements MoveInputBoundary{
 
-    private MoveOutputBoundary presenter;
+    private final MoveOutputBoundary presenter;
 
     public MoveInteractor(MoveOutputBoundary presenter) {
 
@@ -38,14 +38,34 @@ public class MoveInteractor implements MoveInputBoundary{
                 board.move(move);
                 moveOutputData.setRepaint(true);
                 //TODO: round change, reverse timer, record steps
+
                 if (board.ended()){ // game over
                     moveOutputData.setGameOver(true);
-                    moveOutputData.setGameState(board.gameState());
+                    moveOutputData.setMsg(getString(board.gameState(), board.isBlackToMove()));
                 }
             }
         }else {   //invalid move
             moveOutputData.setRepaint(true);
         }presenter.prepareSuccessView(moveOutputData);
+    }
+
+    @NotNull
+    private static String getString(Board.GameState state, boolean blackToMove) {
+        String msg = "ERROR : Game End by Unknown Error";
+        if (state == Board.GameState.draw_by_fifty_move_rule) {
+            msg = "Draw by fifty move rule";
+        }else if (state == Board.GameState.draw_by_threefold_repetition) {
+            msg = "Draw by three fold repetition";
+        }else if (state == Board.GameState.stalemate) {
+            msg = "Draw by stalemate";
+        }else if (state == Board.GameState.checkmate) {
+            if (blackToMove) {
+                msg = "Checkmate! White win";
+            }else {
+                msg = "Checkmate! Black win";
+            }
+        }
+        return msg;
     }
 
     private String findValidMoves(List<String> validMoves, Coordinate coordinate) {

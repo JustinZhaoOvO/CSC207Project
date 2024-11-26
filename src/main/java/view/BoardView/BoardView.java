@@ -1,8 +1,7 @@
 package view.BoardView;
 //CreateTime: 2024-11-11 10:26 a.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
-import chariot.util.Board;
+import entity.ChariotBoard;
 import entity.BoardConstants;
 import entity.Coordinate;
 import interface_adapter.BoardStateConstants;
@@ -49,6 +48,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private final PromotionView whitePromotion;
 
+    private boolean Paused;
+
     public BoardView() {
 
         //add Promotion Components
@@ -89,6 +90,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         this.chariotBoard = chariotBoard;
         this.selected = null;
         this.validMoves = null;
+        this.Paused = false;
         this.MouseEventbanned = false;
 
         repaintBoardController.execute(chariotBoard);
@@ -108,7 +110,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void mouseEnterPiece(PiecesView p){
-        if (MouseEventbanned) return;
+        if (MouseEventbanned || Paused) return;
         if (this.mouseHoverOn != null){
             this.mouseHoverOn.setHovered(false);
         }if (p != null){
@@ -132,7 +134,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             }
             case BoardStateConstants.SELECT -> selectHelper(newValue);
             case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
-            case BoardStateConstants.GAMEOVER -> gameOver(newValue.isBlackTurn(), newValue.getGameState());
+            case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
         }
     }
 
@@ -192,7 +194,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void clickOn(PiecesView p) {
-        if (MouseEventbanned) return;
+        if (MouseEventbanned || Paused) return;
         lastClick = p;
         if (selected != null){
             moveController.execute(this.chariotBoard, p.getCoordinate(), this.validMoves);
@@ -201,32 +203,23 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
     }
 
-    private void gameOver(boolean isWhiteWin, Board.GameState state) {
+    private void gameOver(String msg) {
         this.MouseEventbanned = true;
 
         //TODO : Update scores & clear records
+        JOptionPane.showMessageDialog(this, msg);
+    }
 
-        switch (state) {
-            case Board.GameState.draw_by_fifty_move_rule,
-                 Board.GameState.draw_by_threefold_repetition,
-                 Board.GameState.stalemate:
-                JOptionPane.showMessageDialog(this, "Draw");
-                break;
-            case Board.GameState.checkmate:
-                if (isWhiteWin) {
-                    JOptionPane.showMessageDialog(this, "White win");
-                }else {
-                    JOptionPane.showMessageDialog(this, "Black win");
-                }
-        }
+    public void forfeit(){
+        gameOver(chariotBoard.isBlackToMove() ?  "Black forfeited! White win" : "White forfeited! Black win");
     }
 
     public void freezeBoard(){
-        this.MouseEventbanned = true;
+        this.Paused = true;
     }
 
     public void unfreezeBoard(){
-        this.MouseEventbanned = false;
+        this.Paused = false;
     }
 
     public String getViewName() {

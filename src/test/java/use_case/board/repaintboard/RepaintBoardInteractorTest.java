@@ -1,7 +1,7 @@
 package use_case.board.repaintboard;
 //CreateTime: 2024-11-18 3:12 p.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
+import entity.ChariotBoard;
 import entity.Coordinate;
 import entity.ImageConstants;
 import interface_adapter.board.repaintboard.RepaintBoardController;

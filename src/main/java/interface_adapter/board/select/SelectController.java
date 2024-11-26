@@ -1,11 +1,10 @@
 package interface_adapter.board.select;
 //CreateTime: 2024-11-20 3:28 p.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
+import entity.ChariotBoard;
 import entity.Coordinate;
 import use_case.board.select.SelectInputBoundary;
 import use_case.board.select.SelectInputData;
-import view.BoardView.PiecesView.PiecesView;
 
 public class SelectController {
     private final SelectInputBoundary interactor;

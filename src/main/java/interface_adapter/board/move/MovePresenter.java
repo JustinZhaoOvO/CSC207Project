@@ -38,10 +38,10 @@ public class MovePresenter implements MoveOutputBoundary {
         }if (outputData.isGameOver()){
             //TODO: stop timer
 
-
             BoardState boardState = new BoardState();
             boardState.setBlackTurn(outputData.board().isBlackToMove());
-            boardState.setGameState(outputData.getGameState());
+            boardState.setMsg(outputData.getMsg());
+
             boardViewModel.setState(boardState);
             boardViewModel.firePropertyChanged(BoardStateConstants.GAMEOVER);
         }

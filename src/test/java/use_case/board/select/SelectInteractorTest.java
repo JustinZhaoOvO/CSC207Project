@@ -1,7 +1,7 @@
 package use_case.board.select;
 //CreateTime: 2024-11-25 3:17 p.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
+import entity.ChariotBoard;
 import entity.Coordinate;
 import interface_adapter.board.select.SelectController;
 import org.junit.jupiter.api.Test;

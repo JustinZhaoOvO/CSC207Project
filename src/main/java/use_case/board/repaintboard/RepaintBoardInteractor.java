@@ -2,13 +2,13 @@ package use_case.board.repaintboard;
 //CreateTime: 2024-11-14 4:24 p.m.
 
 
-import api_adapters.ChariotAPI.ChariotBoard;
+import entity.ChariotBoard;
 import use_case.board.ChariotDataParser;
 import view.BoardView.PiecesView.PiecesView;
 
 public class RepaintBoardInteractor implements RepaintBoardInputBoundary {
 
-    private RepaintBoardOutputBoundary presenter;
+    private final RepaintBoardOutputBoundary presenter;
 
     public RepaintBoardInteractor(RepaintBoardOutputBoundary presenter) {
 
