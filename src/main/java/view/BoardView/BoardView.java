@@ -49,6 +49,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private final PromotionView whitePromotion;
 
+    private boolean Paused;
+
     public BoardView() {
 
         //add Promotion Components
@@ -89,7 +91,8 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         this.chariotBoard = chariotBoard;
         this.selected = null;
         this.validMoves = null;
-        unfreezeBoard();
+        this.Paused = false;
+        this.MouseEventbanned = false;
 
         repaintBoardController.execute(chariotBoard);
     }
@@ -108,7 +111,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void mouseEnterPiece(PiecesView p){
-        if (MouseEventbanned) return;
+        if (MouseEventbanned || Paused) return;
         if (this.mouseHoverOn != null){
             this.mouseHoverOn.setHovered(false);
         }if (p != null){
@@ -192,7 +195,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void clickOn(PiecesView p) {
-        if (MouseEventbanned) return;
+        if (MouseEventbanned || Paused) return;
         lastClick = p;
         if (selected != null){
             moveController.execute(this.chariotBoard, p.getCoordinate(), this.validMoves);
@@ -233,11 +236,11 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void freezeBoard(){
-        this.MouseEventbanned = true;
+        this.Paused = true;
     }
 
     public void unfreezeBoard(){
-        this.MouseEventbanned = false;
+        this.Paused = false;
     }
 
     public String getViewName() {
