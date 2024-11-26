@@ -47,4 +47,11 @@ public class SignupPresenter implements SignupOutputBoundary {
         viewManagerModel.setState(loginViewModel.getViewName());
         viewManagerModel.firePropertyChanged();
     }
+
+    @Override
+    public void prepareGameStart(String player1, String player2) {
+        System.out.println("Game starting with " + player1 + " and " + player2);
+        viewManagerModel.setState("boardView"); // Transition to the board view
+        viewManagerModel.firePropertyChanged();
+    }
 }
