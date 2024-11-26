@@ -3,13 +3,9 @@ package view;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
@@ -17,7 +13,7 @@ import interface_adapter.signup.SignupViewModel;
 /**
  * The View for the Signup Use Case.
  */
-public class SignupView extends JPanel implements ActionListener, PropertyChangeListener {
+public class SignupView extends JPanel implements PropertyChangeListener {
 
     private final String viewName = "sign up";
 
@@ -28,48 +24,54 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
     private SignupController signupController;
 
     private final JButton signUpButton;
-    private final JButton cancelButton;
     private final JButton toLoginButton;
+
+    private String player1Username;
+    private String player1Password;
+
+    private String player2Username;
+    private String player2Password;
+
+    private boolean isPlayer1 = true; // Indicates which player is signing up
 
     public SignupView(SignupViewModel signupViewModel) {
         this.signupViewModel = signupViewModel;
         signupViewModel.addPropertyChangeListener(this);
 
         // Initialize components
-        final JLabel titleLabel = new JLabel("Sign Up");
+        final JLabel titleLabel = new JLabel("Sign Up - Player 1");
         final JLabel usernameLabel = new JLabel("Choose Username:");
         final JLabel passwordLabel = new JLabel("Password:");
         final JLabel repeatPasswordLabel = new JLabel("Re-enter Password:");
 
         signUpButton = new JButton("Sign Up");
-        cancelButton = new JButton("Cancel");
         toLoginButton = new JButton("Back to Login");
 
         // Add event listeners
-        addListeners();
+        signUpButton.addActionListener(evt -> handleSignUp());
+        toLoginButton.addActionListener(evt -> signupController.switchToLoginView());
 
         // Set layout
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Padding around components
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Fill horizontally
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Title
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER; // Center title
+        gbc.anchor = GridBagConstraints.CENTER;
         this.add(titleLabel, gbc);
-
 
         // Username Label and Field
         gbc.gridwidth = 1;
         gbc.gridy++;
-        gbc.anchor = GridBagConstraints.LINE_END; // Align label to right
+        gbc.anchor = GridBagConstraints.LINE_END;
         this.add(usernameLabel, gbc);
 
         gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.LINE_START; // Align field to left
+        gbc.anchor = GridBagConstraints.LINE_START;
         this.add(usernameInputField, gbc);
 
         // Password Label and Field
@@ -99,71 +101,53 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         gbc.anchor = GridBagConstraints.CENTER;
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(signUpButton);
-        buttonPanel.add(cancelButton);
         buttonPanel.add(toLoginButton);
         this.add(buttonPanel, gbc);
     }
 
     /**
-     * Add event listeners for components.
+     * Handles the signup process for Player 1 and Player 2.
      */
-    private void addListeners() {
-        signUpButton.addActionListener(evt -> {
-            final SignupState currentState = signupViewModel.getState();
-            signupController.execute(
-                    currentState.getUsername(),
-                    currentState.getPassword(),
-                    currentState.getRepeatPassword()
-            );
-        });
+    private void handleSignUp() {
+        final SignupState currentState = signupViewModel.getState();
+        String username = currentState.getUsername();
+        String password = currentState.getPassword();
+        String repeatPassword = currentState.getRepeatPassword();
 
-        toLoginButton.addActionListener(evt -> signupController.switchToLoginView());
+        if (!password.equals(repeatPassword)) {
+            JOptionPane.showMessageDialog(this, "Passwords do not match!");
+            return;
+        }
 
-        cancelButton.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Cancel action not implemented."));
+        if (isPlayer1) {
+            // Save Player 1's credentials
+            player1Username = username;
+            player1Password = password;
+            isPlayer1 = false;
 
-        // Add listeners to update state dynamically
-        addDocumentListener(usernameInputField, text -> {
-            SignupState state = signupViewModel.getState();
-            state.setUsername(text);
-            signupViewModel.setState(state);
-        });
+            // Reset state and clear input fields
+            signupViewModel.resetState();
+            clearInputFields();
 
-        addDocumentListener(passwordInputField, text -> {
-            SignupState state = signupViewModel.getState();
-            state.setPassword(text);
-            signupViewModel.setState(state);
-        });
+            JOptionPane.showMessageDialog(this, "Player 1 registered! Now, Player 2, please sign up.");
+            ((JLabel) this.getComponent(0)).setText("Sign Up - Player 2");
+        } else {
+            // Save Player 2's credentials
+            player2Username = username;
+            player2Password = password;
 
-        addDocumentListener(repeatPasswordInputField, text -> {
-            SignupState state = signupViewModel.getState();
-            state.setRepeatPassword(text);
-            signupViewModel.setState(state);
-        });
+            JOptionPane.showMessageDialog(this, "Player 2 registered! Starting the game...");
+            signupController.startGameWithPlayers(player1Username, player2Username);
+        }
     }
 
     /**
-     * Add a document listener to a text field or password field.
+     * Clears all input fields in the signup form.
      */
-    private void addDocumentListener(JTextField field, java.util.function.Consumer<String> callback) {
-        field.getDocument().addDocumentListener(new DocumentListener() {
-            private void update() {
-                callback.accept(field instanceof JPasswordField
-                        ? new String(((JPasswordField) field).getPassword())
-                        : field.getText());
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) { update(); }
-            @Override
-            public void removeUpdate(DocumentEvent e) { update(); }
-            @Override
-            public void changedUpdate(DocumentEvent e) { update(); }
-        });
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent evt) {
-        JOptionPane.showMessageDialog(this, "Button action not implemented yet.");
+    private void clearInputFields() {
+        usernameInputField.setText("");
+        passwordInputField.setText("");
+        repeatPasswordInputField.setText("");
     }
 
     @Override
