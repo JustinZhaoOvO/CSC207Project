@@ -7,6 +7,10 @@ import java.awt.*;
 
 public class WindowView extends JPanel {
 
+    public WindowView() {
+
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
