@@ -1,10 +1,8 @@
 package use_case.board.move;
 //CreateTime: 2024-11-20 3:15 p.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
-import chariot.util.Board;
+import entity.ChariotBoard;
 import entity.Coordinate;
-import view.BoardView.PiecesView.PiecesView;
 
 public class MoveOutputData {
 
@@ -12,9 +10,9 @@ public class MoveOutputData {
     private boolean select;
     private boolean promotion;
     private boolean gameOver;
-    private Board.GameState gameState;
     private final ChariotBoard board;
     private final Coordinate coordinate;
+    private String msg;
 
     public MoveOutputData(ChariotBoard board, Coordinate coordinate) {
         this.board = board;
@@ -57,15 +55,15 @@ public class MoveOutputData {
         this.gameOver = gameOver;
     }
 
-    public Board.GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(Board.GameState gameState) {
-        this.gameState = gameState;
-    }
-
     public Coordinate getCoordinate() {
         return coordinate;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }

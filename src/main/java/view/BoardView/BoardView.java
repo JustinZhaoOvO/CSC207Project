@@ -1,8 +1,7 @@
 package view.BoardView;
 //CreateTime: 2024-11-11 10:26 a.m.
 
-import api_adapters.ChariotAPI.ChariotBoard;
-import chariot.util.Board;
+import entity.ChariotBoard;
 import entity.BoardConstants;
 import entity.Coordinate;
 import interface_adapter.BoardStateConstants;
@@ -135,7 +134,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
             }
             case BoardStateConstants.SELECT -> selectHelper(newValue);
             case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
-            case BoardStateConstants.GAMEOVER -> gameOver(newValue.isBlackTurn(), newValue.getGameState());
+            case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
         }
     }
 
@@ -204,35 +203,15 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         }
     }
 
-    private void gameOver(boolean isWhiteWin, Board.GameState state) {
+    private void gameOver(String msg) {
         this.MouseEventbanned = true;
 
         //TODO : Update scores & clear records
-
-        if (state == Board.GameState.draw_by_fifty_move_rule) {
-            JOptionPane.showMessageDialog(this, "Draw by fifty move rule");
-        }else if (state == Board.GameState.draw_by_threefold_repetition) {
-            JOptionPane.showMessageDialog(this, "Draw by three fold repetition");
-        }else if (state == Board.GameState.stalemate) {
-
-            JOptionPane.showMessageDialog(this, "Draw by stalemate");
-        }else if (state == Board.GameState.checkmate){
-                if (isWhiteWin) {
-                    JOptionPane.showMessageDialog(this, "Checkmate! White win");
-                }else {
-                    JOptionPane.showMessageDialog(this, "Checkmate! Black win");
-                }
-        }else {
-            if (isWhiteWin){
-                JOptionPane.showMessageDialog(this, "Black forfeited! White win");
-            }else {
-                JOptionPane.showMessageDialog(this, "White forfeited! Black win");
-            }
-        }
+        JOptionPane.showMessageDialog(this, msg);
     }
 
     public void forfeit(){
-        gameOver(chariotBoard.isBlackToMove(), Board.GameState.ongoing);
+        gameOver(chariotBoard.isBlackToMove() ?  "Black forfeited! White win" : "White forfeited! Black win");
     }
 
     public void freezeBoard(){
