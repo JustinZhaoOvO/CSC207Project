@@ -3,10 +3,12 @@ package view.BoardView.PromotionView;
 
 import entity.ImageConstants;
 import view.BoardView.BoardView;
+import view.BoardView.ColorConstants;
 import view.BoardView.PromotionView.PromotionImageView.PromotionImageListener;
 import view.BoardView.PromotionView.PromotionImageView.PromotionImageView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +16,12 @@ public class PromotionView extends JPanel {
 
     private final BoardView boardView;
     private final Map<String, PromotionImageView> map;
+    private PromotionImageView selected;
 
     public PromotionView(boolean isBlack, BoardView boardView) {
+
+        this.setOpaque(false);
+
         this.map = new HashMap<>();
         this.boardView = boardView;
 
@@ -50,5 +56,13 @@ public class PromotionView extends JPanel {
 
     public Map<String, PromotionImageView> getMap() {
         return map;
+    }
+
+    public void setSelectedTo(PromotionImageView view) {
+        if (selected != null){
+            selected.unselected();
+        }if (view != null){
+            view.selected();
+        }selected = view;
     }
 }

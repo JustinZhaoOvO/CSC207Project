@@ -21,11 +21,15 @@ public class TimerController {
         interactor.switchTurn();
     }
 
-    public void pauseGame() {    // 新增方法
+    public void pauseGame() {
         interactor.pauseTimer();
     }
 
-    public void resumeGame() {   // 新增方法
+    public void resumeGame() {
         interactor.resumeTimer();
+    }
+
+    public void resetTimers() {
+        interactor.resetTimers();
     }
 }

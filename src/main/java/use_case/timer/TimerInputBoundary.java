@@ -6,4 +6,5 @@ public interface TimerInputBoundary {
     void switchTurn();
     void pauseTimer();
     void resumeTimer();
+    void resetTimers(); // Added method
 }

@@ -12,7 +12,7 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     private boolean isPlayer1Turn;
     private Thread timerThread;
 
-    // 构造函数，接受总时间和输出边界
+    // Constructor
     public TimerInteractor(long totalTimePerPlayer, TimerOutputBoundary outputBoundary) {
         this.player1Timer = new Timer(totalTimePerPlayer);
         this.player2Timer = new Timer(totalTimePerPlayer);
@@ -54,8 +54,16 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     public void resumeTimer() {
         paused = false;
         synchronized (this) {
-            this.notify(); // 唤醒等待的线程
+            this.notify(); // Wake up the waiting thread
         }
+    }
+
+    @Override
+    public void resetTimers() {
+        player1Timer.reset();
+        player2Timer.reset();
+        isPlayer1Turn = true;
+        updateTime();
     }
 
     private void updateTime() {
@@ -73,12 +81,16 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
             if (paused) {
                 synchronized (this) {
                     try {
-                        this.wait(); // 等待恢复
+                        this.wait(); // Wait until notified to resume
                     } catch (InterruptedException e) {
+                        if (!running) {
+                            // Exit loop if not running
+                            break;
+                        }
                         e.printStackTrace();
                     }
                 }
-                previousTime = System.currentTimeMillis(); // 重置时间
+                previousTime = System.currentTimeMillis(); // Reset time after pause
                 continue;
             }
             long currentTime = System.currentTimeMillis();
@@ -95,13 +107,17 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
 
             if (player1Timer.isTimeUp() || player2Timer.isTimeUp()) {
                 running = false;
-                // 处理时间用尽事件
+                // Notify which player's time is up
                 outputBoundary.timeUp(isPlayer1Turn ? 1 : 2);
             }
 
             try {
-                Thread.sleep(100); // 每100毫秒更新一次
+                Thread.sleep(100); // Update every 100 milliseconds
             } catch (InterruptedException e) {
+                if (!running) {
+                    // Exit loop if not running
+                    break;
+                }
                 e.printStackTrace();
             }
         }

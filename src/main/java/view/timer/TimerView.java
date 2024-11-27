@@ -10,46 +10,58 @@ import java.beans.PropertyChangeListener;
 import java.awt.event.ActionListener;
 
 public class TimerView extends JPanel implements PropertyChangeListener {
-    private long player1Time; // Player 1 remaining time
-    private long player2Time; // Player 2 remaining time
-    private boolean isPlayer1Turn; // Indicates if it's Player 1's turn
-    private int timeUpPlayer; // Indicates which player time is up (1 or 2)
+    private long player1Time; // Player 1 剩余时间
+    private long player2Time; // Player 2 剩余时间
+    private boolean isPlayer1Turn; // 是否为 Player 1 的回合
+    private int timeUpPlayer; // 时间到的玩家编号（1 或 2）
     private JButton pauseButton;
     private JButton startButton;
+    private JButton restartButton;
     private boolean isPaused;
+    private final long totalTime; // 每个玩家的总时间（毫秒）
 
-    public TimerView() {
-        this.setPreferredSize(new Dimension(200, 600)); // Set panel size to 200x600
-        this.player1Time = 0;
-        this.player2Time = 0;
+    // 构造函数，接受每个玩家的总时间作为参数
+    public TimerView(long totalTimePerPlayer) {
+        this.setPreferredSize(new Dimension(200, 600));
+        this.player1Time = totalTimePerPlayer;
+        this.player2Time = totalTimePerPlayer;
         this.isPlayer1Turn = true;
         this.timeUpPlayer = 0;
         this.isPaused = false;
+        this.totalTime = totalTimePerPlayer;
 
-        setLayout(null); // Using absolute positioning
+        setLayout(null); // 使用绝对定位
 
-        // Load and scale images
+        // 加载并缩放图像
         Image pauseImage = ImageConstants.PAUSEBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         Image startImage = ImageConstants.STARTBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        Image restartImage = ImageConstants.RESTARTBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
-        // Initialize pause button
+        // 初始化暂停按钮
         pauseButton = new JButton(new ImageIcon(pauseImage));
         pauseButton.setBounds(10, 550, 50, 50);
         styleButton(pauseButton);
         add(pauseButton);
 
-        // Initialize start button
+        // 初始化开始按钮
         startButton = new JButton(new ImageIcon(startImage));
         startButton.setBounds(70, 550, 50, 50);
         styleButton(startButton);
         add(startButton);
 
-        // Initially, start button is not visible
+        // 初始化重启按钮
+        restartButton = new JButton(new ImageIcon(restartImage));
+        restartButton.setBounds(130, 550, 50, 50);
+        styleButton(restartButton);
+        add(restartButton);
+
+        // 初始时，开始按钮不可见
         startButton.setVisible(false);
 
-        // Debug: Verify images are loaded
+        // 调试：验证图像是否加载
         System.out.println("Pause Button Image: " + (ImageConstants.PAUSEBUTTON != null));
         System.out.println("Start Button Image: " + (ImageConstants.STARTBUTTON != null));
+        System.out.println("Restart Button Image: " + (ImageConstants.RESTARTBUTTON != null));
     }
 
     private void styleButton(JButton button) {
@@ -59,12 +71,12 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         button.setOpaque(false);
         button.setFocusable(false);
         button.setRolloverEnabled(false);
-        // Ensure the pressed and selected icons are same as default icon
+        // 确保按下和选中图标与默认图标相同
         button.setPressedIcon(button.getIcon());
         button.setSelectedIcon(button.getIcon());
     }
 
-    // Provide methods to add listeners
+    // 添加监听器的方法
     public void addPauseActionListener(ActionListener listener) {
         pauseButton.addActionListener(listener);
     }
@@ -73,7 +85,11 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         startButton.addActionListener(listener);
     }
 
-    // Methods to show/hide buttons
+    public void addRestartActionListener(ActionListener listener) {
+        restartButton.addActionListener(listener);
+    }
+
+    // 显示/隐藏按钮的方法
     public void showPauseButton() {
         pauseButton.setVisible(true);
         startButton.setVisible(false);
@@ -92,75 +108,103 @@ public class TimerView extends JPanel implements PropertyChangeListener {
             case "isPlayer1Turn" -> isPlayer1Turn = (boolean) evt.getNewValue();
             case "timeUp" -> timeUpPlayer = (int) evt.getNewValue();
         }
-        repaint(); // Repaint the panel when properties change
+        repaint(); // 当属性变化时重绘面板
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Get panel dimensions
+        // 将 Graphics 转换为 Graphics2D
+        Graphics2D g2 = (Graphics2D) g;
+
+        // 获取面板尺寸
         int width = getWidth();
         int height = getHeight();
 
-        // Set background color based on current turn
+        // 将面板垂直分为上下两块
+        int blockHeight = height / 2;
+
+        // 计算时间比例
+        float ratio1 = (float) player1Time / totalTime;
+        ratio1 = Math.max(0, Math.min(1, ratio1)); // 限制在0到1之间
+
+        float ratio2 = (float) player2Time / totalTime;
+        ratio2 = Math.max(0, Math.min(1, ratio2)); // 限制在0到1之间
+
+        // 绘制 Player 1 的块（上半部分）
+        int player1RemainingHeight = (int) (blockHeight * ratio1);
+        int player1Y = 0;
+
+        // 绘制背景为白色
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, player1Y, width, blockHeight);
+
+        // 绘制 Player 1 剩余时间的部分
+        g2.setColor(Color.CYAN); // 使用 CYAN 颜色
+        g2.fillRect(0, player1Y + (blockHeight - player1RemainingHeight), width, player1RemainingHeight);
+
+        // 如果是 Player 1 的回合，绘制黄色边框
         if (isPlayer1Turn) {
-            g.setColor(ColorConstants.BLUEWHITE); // Player 1 color (blue)
-        } else {
-            g.setColor(ColorConstants.RED); // Player 2 color (red)
-        }
-        g.fillRect(0, 0, width, height);
-
-        // Calculate time ratio
-        float ratio;
-        Color currentColor;
-        long totalTime = 1 * 60 * 1000; // 1 minute total time
-
-        if (isPlayer1Turn) {
-            ratio = (float) player1Time / totalTime;
-            ratio = Math.max(0, Math.min(1, ratio)); // Clamp between 0 and 1
-            currentColor = ColorConstants.RED; // Player 1's remaining time color
-        } else {
-            ratio = (float) player2Time / totalTime;
-            ratio = Math.max(0, Math.min(1, ratio));
-            currentColor = ColorConstants.BLUEWHITE; // Player 2's remaining time color
+            g2.setColor(Color.YELLOW);
+            g2.setStroke(new BasicStroke(5));
+            g2.drawRect(0, player1Y, width - 1, blockHeight - 1);
         }
 
-        // Calculate remaining time height
-        int remainingHeight = (int) (height * ratio);
+        // 绘制 Player 1 的信息
+        g2.setColor(Color.BLACK);
+        g2.setFont(new Font("Arial", Font.BOLD, 16));
+        String player1Text = "Player 1";
+        FontMetrics fm = g2.getFontMetrics();
+        int textWidth = fm.stringWidth(player1Text);
+        g2.drawString(player1Text, (width - textWidth) / 2, player1Y + 20);
 
-        // Draw remaining time area
-        g.setColor(currentColor);
-        g.fillRect(0, height - remainingHeight, width, remainingHeight); // Draw from bottom up
+        // 显示 Player 1 剩余时间
+        String timeText1 = formatTime(player1Time);
+        textWidth = fm.stringWidth(timeText1);
+        g2.drawString(timeText1, (width - textWidth) / 2, player1Y + blockHeight - 10);
 
-        // Draw "Time Remaining" text
-        g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.BOLD, 16));
-        String timeRemainingText = "Time Remaining";
-        FontMetrics fm = g.getFontMetrics();
-        int textWidth = fm.stringWidth(timeRemainingText);
-        g.drawString(timeRemainingText, (width - textWidth) / 2, height - 40); // Slight margin above
+        // 绘制 Player 2 的块（下半部分）
+        int player2RemainingHeight = (int) (blockHeight * ratio2);
+        int player2Y = blockHeight;
 
-        // Display remaining time at the bottom
-        String timeText = formatTime(isPlayer1Turn ? player1Time : player2Time);
-        textWidth = fm.stringWidth(timeText);
-        g.drawString(timeText, (width - textWidth) / 2, height - 20);
+        // 绘制背景为白色
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, player2Y, width, blockHeight);
 
-        // Display current turn information at the top
-        String turnText = isPlayer1Turn ? "Player 1's Turn" : "Player 2's Turn";
-        g.drawString(turnText, 10, 40);
+        // 绘制 Player 2 剩余时间的部分
+        g2.setColor(Color.RED); // 使用 RED 颜色
+        g2.fillRect(0, player2Y + (blockHeight - player2RemainingHeight), width, player2RemainingHeight);
 
-        // Display time-up message if applicable
+        // 如果是 Player 2 的回合，绘制黄色边框
+        if (!isPlayer1Turn) {
+            g2.setColor(Color.YELLOW);
+            g2.setStroke(new BasicStroke(5));
+            g2.drawRect(0, player2Y, width - 1, blockHeight - 1);
+        }
+
+        // 绘制 Player 2 的信息
+        g2.setColor(Color.BLACK);
+        String player2Text = "Player 2";
+        textWidth = fm.stringWidth(player2Text);
+        g2.drawString(player2Text, (width - textWidth) / 2, player2Y + 20);
+
+        // 显示 Player 2 剩余时间
+        String timeText2 = formatTime(player2Time);
+        textWidth = fm.stringWidth(timeText2);
+        g2.drawString(timeText2, (width - textWidth) / 2, player2Y + blockHeight - 10);
+
+        // 如果有玩家时间到，显示提示信息
         if (timeUpPlayer != 0) {
-            String message = "Player " + (timeUpPlayer == 1 ? "1" : "2") + " time is up!";
-            g.setFont(new Font("Arial", Font.BOLD, 24));
-            g.setColor(Color.RED);
-            textWidth = g.getFontMetrics().stringWidth(message);
-            g.drawString(message, (width - textWidth) / 2, height / 2);
+            String message = "Player " + timeUpPlayer + " time is up!";
+            g2.setFont(new Font("Arial", Font.BOLD, 24));
+            g2.setColor(Color.RED);
+            textWidth = g2.getFontMetrics().stringWidth(message);
+            g2.drawString(message, (width - textWidth) / 2, height / 2);
         }
     }
 
-    // Convert milliseconds to mm:ss format
+    // 将毫秒转换为 mm:ss 格式
     private String formatTime(long timeMillis) {
         long totalSeconds = timeMillis / 1000;
         long minutes = totalSeconds / 60;
@@ -168,14 +212,12 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         return minutes + ":" + String.format("%02d", seconds);
     }
 
-    // Update paused state
+    // 更新暂停状态
     public void setPaused(boolean paused) {
         this.isPaused = paused;
         if (paused) {
-            // Switch to start button
             showStartButton();
         } else {
-            // Switch to pause button
             showPauseButton();
         }
     }

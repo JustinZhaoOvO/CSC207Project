@@ -20,6 +20,10 @@ public class Timer {
         }
     }
 
+    public void reset() {
+        remainingTime = totalTime;
+    }
+
     public boolean isTimeUp() {
         return remainingTime <= 0;
     }
