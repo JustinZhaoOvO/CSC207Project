@@ -37,7 +37,10 @@ public class ViewTest extends JFrame{
 
         //initialize window Component
         JPanel window = new WindowView();
-        window.setLayout(new WindowLayout(boardView));
+        WindowLayout windowLayout = new WindowLayout();
+        windowLayout.setBoardView(boardView);
+        window.setLayout(windowLayout);
+
         this.setContentPane(window);
         window.setBackground(ColorConstants.LIGHTBLUE);
 
