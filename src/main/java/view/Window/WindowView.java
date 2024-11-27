@@ -4,11 +4,18 @@ package view.Window;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
 
-public class WindowView extends JPanel {
+public class WindowView extends JPanel{
+
+    private final String viewName = "Mainwindow";
 
     public WindowView() {
 
+    }
+
+    public String getViewName() {
+        return viewName;
     }
 
     @Override
