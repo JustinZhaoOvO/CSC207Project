@@ -12,8 +12,8 @@ import interface_adapter.board.select.SelectPresenter;
 import use_case.board.move.MoveInteractor;
 import use_case.board.repaintboard.RepaintBoardInteractor;
 import use_case.board.select.SelectInteractor;
-import view.WindowView.WindowLayout;
-import view.WindowView.WindowView;
+import view.Window.WindowLayout;
+import view.Window.WindowView;
 
 import javax.swing.*;
 
