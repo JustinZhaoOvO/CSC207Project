@@ -1,12 +1,10 @@
-package view.WindowView;
+package view.Window;
 //CreateTime: 2024-11-16 12:11 p.m.
 
 import view.BoardView.BoardView;
 import view.LayoutAdapter;
 
-import javax.swing.text.View;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
 
 public class WindowLayout extends LayoutAdapter {
 
