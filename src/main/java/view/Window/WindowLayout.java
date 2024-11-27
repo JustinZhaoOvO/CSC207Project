@@ -3,12 +3,14 @@ package view.Window;
 
 import view.BoardView.BoardView;
 import view.LayoutAdapter;
+import view.timer.TimerView;
 
 import java.awt.*;
 
 public class WindowLayout extends LayoutAdapter {
 
     private BoardView boardView;
+    private TimerView timerView;
 
     public void setBoardView(BoardView boardView) {
         this.boardView = boardView;
@@ -17,11 +19,19 @@ public class WindowLayout extends LayoutAdapter {
     @Override
     public void layoutContainer(Container parent) {
 
+        int width = parent.getWidth();
+        int height = parent.getHeight();
         //board view layout
-        int len = Math.min(parent.getWidth()* 3 / 4, parent.getHeight());
+        int len = Math.min(parent.getWidth()* 3 / 5, parent.getHeight());
+        int timerWidth = Math.min(parent.getWidth() / 5, parent.getHeight());
         super.layoutContainer(parent);
         boardView.setBounds(0, 0, len, len);
+        timerView.setBounds(600,0,timerWidth,600);
 
+        super.layoutContainer(parent);
+    }
 
+    public void setTimerView(TimerView timerView) {
+        this.timerView = timerView;
     }
 }
