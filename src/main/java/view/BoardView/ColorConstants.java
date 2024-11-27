@@ -7,7 +7,7 @@ public class ColorConstants {
     //background
     public final static Color LIGHTBLUE = new Color(108, 158, 210);
     //chessboard
-    public final static Color DRAKGREEN = new Color(39, 114, 1);
+    public final static Color DRAKGREEN = new Color(47, 136, 1);
     //chessboard
     public final static Color YELLOWWHITE = new Color(243, 235, 205);
     //selected
@@ -19,7 +19,7 @@ public class ColorConstants {
     //frame
     public final static Color CYAN = new Color(6, 202, 208);
     //Color of Pawn Promotion Selection List
-    public final static Color BLUEWHITE = new Color(197, 203, 255);
+    public final static Color BLUEWHITE = new Color(197, 203, 255, 111);
     //selected component in the Pawn Promotion Selection List
-    public final static Color LIGHTGREEN = new Color(57, 232, 23);
+    public final static Color SELECTPROMOTIONCOMPONENT = new Color(255, 254, 129, 171);
 }

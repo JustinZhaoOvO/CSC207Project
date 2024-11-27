@@ -18,8 +18,12 @@ public class WindowLayout extends LayoutAdapter {
 
     @Override
     public void layoutContainer(Container parent) {
+
+        //board view layout
         int len = Math.min(parent.getWidth()* 3 / 4, parent.getHeight());
         super.layoutContainer(parent);
         boardView.setBounds(0, 0, len, len);
+
+
     }
 }
