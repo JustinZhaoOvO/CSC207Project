@@ -8,9 +8,9 @@ import java.awt.*;
 
 public class WindowLayout extends LayoutAdapter {
 
-    private final BoardView boardView;
+    private BoardView boardView;
 
-    public WindowLayout(BoardView boardView) {
+    public void setBoardView(BoardView boardView) {
         this.boardView = boardView;
     }
 
