@@ -1,7 +1,6 @@
 package view.timer;
 
 import entity.ImageConstants;
-import view.BoardView.ColorConstants;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package use_case.timer;
+package interface_adapter.timer;
 
 public interface TimerInputBoundary {
     void startTimer();
@@ -6,5 +6,5 @@ public interface TimerInputBoundary {
     void switchTurn();
     void pauseTimer();
     void resumeTimer();
-    void resetTimers(); // Added method
+    void resetTimers();
 }
