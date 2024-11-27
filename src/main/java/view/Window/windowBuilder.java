@@ -8,6 +8,7 @@ import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.repaintboard.RepaintBoardPresenter;
 import interface_adapter.board.select.SelectController;
 import interface_adapter.board.select.SelectPresenter;
+import interface_adapter.controller.TimerManager;
 import interface_adapter.window.WindowViewModel;
 import use_case.board.move.MoveInteractor;
 import use_case.board.repaintboard.RepaintBoardInteractor;
@@ -15,12 +16,14 @@ import use_case.board.select.SelectInteractor;
 import view.BoardView.BoardLayout;
 import view.BoardView.BoardView;
 import view.BoardView.ColorConstants;
+import view.timer.TimerView;
 
 public class windowBuilder {
 
     private final WindowView windowView;
     private final WindowLayout windowLayout;
     private final WindowViewModel windowViewModel;
+    private TimerManager timerManager; // Add timerManager field
 
     public windowBuilder() {
         this.windowView = new WindowView();
@@ -63,6 +66,23 @@ public class windowBuilder {
 
         //add BoardView to the listener list of BoardViewModel
         boardViewModel.addPropertyChangeListener(boardView);
+
+        return this;
+    }
+
+    public windowBuilder addTimer(){
+        // 初始化计时器组件
+        long totalTimePerPlayer = 5 * 60 * 1000; // 每个玩家5分钟
+        TimerView timerView = new TimerView(totalTimePerPlayer);
+
+        // 实例化 TimerManager
+        timerManager = new TimerManager(totalTimePerPlayer, timerView);
+
+        // 将 TimerView 添加到 windowView
+        this.windowView.add(timerView);
+
+        // 将 TimerView 设置到布局中
+        this.windowLayout.setTimerView(timerView);
 
         return this;
     }

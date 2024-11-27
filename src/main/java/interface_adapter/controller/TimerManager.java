@@ -1,8 +1,6 @@
 package interface_adapter.controller;
 
 import interface_adapter.timer.TimerController;
-import interface_adapter.timer.TimerInputBoundary;
-import interface_adapter.timer.TimerOutputBoundary;
 import use_case.timer.TimerInteractor;
 import view.timer.TimerPresenter;
 import view.timer.TimerView;
@@ -73,10 +71,14 @@ public class TimerManager {
         timerView.addRestartActionListener(e -> {
             System.out.println("Restart button clicked");
             resetTimerAndGame();
+            // 通知重启监听器（如果有）
+            if (restartListener != null) {
+                restartListener.onRestart();
+            }
         });
     }
 
-    // 重置定时器并通知重新开始游戏
+    // 重置计时器和游戏
     public void resetTimerAndGame() {
         timerController.stopGame();
         timerController.resetTimers();
@@ -86,10 +88,6 @@ public class TimerManager {
         timerController.resumeGame();
         if (switchTurnTimer != null) {
             switchTurnTimer.restart();
-        }
-        // 通知其他组件（如游戏棋盘）重启
-        if (restartListener != null) {
-            restartListener.onRestart();
         }
     }
 
@@ -102,6 +100,4 @@ public class TimerManager {
     public void setRestartListener(RestartListener listener) {
         this.restartListener = listener;
     }
-
-    // 如果需要，可以添加更多的方法
 }
