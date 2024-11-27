@@ -10,6 +10,7 @@ import interface_adapter.board.move.MoveController;
 import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.select.SelectController;
 import interface_adapter.window.WindowState;
+import interface_adapter.window.WindowViewModel;
 import view.BoardView.PiecesView.PiecesListener;
 import view.BoardView.PiecesView.PiecesView;
 import view.BoardView.PromotionView.PromotionLayout;
@@ -51,7 +52,13 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private boolean Paused;
 
-    public BoardView() {
+    private boolean gameOver;
+
+    private final WindowViewModel windowViewModel;
+
+    public BoardView(WindowViewModel windowViewModel) {
+
+        this.windowViewModel = windowViewModel;
 
         //add Promotion Components
         this.blackPromotion = new PromotionView(true, this);
@@ -93,6 +100,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         this.validMoves = null;
         this.Paused = false;
         this.MouseEventbanned = false;
+        this.gameOver = false;
 
         repaintBoardController.execute(chariotBoard);
     }
@@ -147,7 +155,13 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     unfreezeBoard();
                 }
             }else if ("restart".equals(propertyName)){
-                restartTheGameWith(new ChariotBoard());
+                if (!this.gameOver){// stop timer, Update scores
+                    WindowState windowState = new WindowState();
+                    windowState.setGameOver(true);
+                    windowViewModel.setState(windowState);
+                    windowViewModel.firePropertyChanged("gameOver");
+                    forfeit();
+                }restartTheGameWith(new ChariotBoard());
             }else if ("blackRanOutOfTime".equals(propertyName)){
                 timeOut(newValue.isBlackRanOutOfTime());
             }
@@ -222,7 +236,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private void gameOver(String msg) {
         this.MouseEventbanned = true;
-
+        this.gameOver = true;
         JOptionPane.showMessageDialog(this, msg);
     }
 
