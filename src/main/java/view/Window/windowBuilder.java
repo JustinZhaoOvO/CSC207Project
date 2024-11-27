@@ -32,7 +32,7 @@ public class windowBuilder {
 
     public windowBuilder addBoard(){
         //initialize board and layout
-        BoardView boardView = new BoardView();
+        BoardView boardView = new BoardView(windowViewModel);
         boardView.setLayout(new BoardLayout());
 
         //initalize boardView in windowView and layout
