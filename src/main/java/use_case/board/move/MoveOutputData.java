@@ -13,6 +13,8 @@ public class MoveOutputData {
     private final ChariotBoard board;
     private final Coordinate coordinate;
     private String msg;
+    private boolean moved;
+    private String move;
 
     public MoveOutputData(ChariotBoard board, Coordinate coordinate) {
         this.board = board;
@@ -65,5 +67,21 @@ public class MoveOutputData {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public boolean isMoved() {
+        return moved;
+    }
+
+    public void setMoved(boolean moved) {
+        this.moved = moved;
+    }
+
+    public String getMove() {
+        return move;
+    }
+
+    public void setMove(String move) {
+        this.move = move;
     }
 }

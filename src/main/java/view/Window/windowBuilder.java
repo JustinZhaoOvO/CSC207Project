@@ -8,6 +8,7 @@ import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.repaintboard.RepaintBoardPresenter;
 import interface_adapter.board.select.SelectController;
 import interface_adapter.board.select.SelectPresenter;
+import interface_adapter.window.WindowViewModel;
 import use_case.board.move.MoveInteractor;
 import use_case.board.repaintboard.RepaintBoardInteractor;
 import use_case.board.select.SelectInteractor;
@@ -19,9 +20,11 @@ public class windowBuilder {
 
     private final WindowView windowView;
     private final WindowLayout windowLayout;
+    private final WindowViewModel windowViewModel;
 
     public windowBuilder() {
         this.windowView = new WindowView();
+        this.windowViewModel = new WindowViewModel(windowView.getViewName());
         this.windowView.setBackground(ColorConstants.LIGHTBLUE);
         this.windowLayout = new WindowLayout();
         this.windowView.setLayout(windowLayout);
@@ -36,6 +39,7 @@ public class windowBuilder {
         this.windowView.setBoardView(boardView);
         this.windowView.add(boardView);
         this.windowLayout.setBoardView(boardView);
+        this.windowViewModel.addPropertyChangeListener(boardView);
 
 
         //initialize the controllers
@@ -48,7 +52,7 @@ public class windowBuilder {
         SelectInteractor selectInteractor = new SelectInteractor(selectPresenter);
         SelectController selectController = new SelectController(selectInteractor);
 
-        MovePresenter movePresenter = new MovePresenter(boardViewModel,repaintBoardController, selectController);
+        MovePresenter movePresenter = new MovePresenter(boardViewModel,repaintBoardController, selectController, windowViewModel);
         MoveInteractor moveInteractor = new MoveInteractor(movePresenter);
         MoveController moveController = new MoveController(moveInteractor);
 
