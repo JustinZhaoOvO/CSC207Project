@@ -1,6 +1,7 @@
 package use_case.timer;
 
 import entity.Timer;
+import interface_adapter.timer.TimerInputBoundary;
 import interface_adapter.timer.TimerOutputBoundary;
 
 public class TimerInteractor implements TimerInputBoundary, Runnable {
@@ -12,7 +13,7 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     private boolean isPlayer1Turn;
     private Thread timerThread;
 
-    // Constructor
+    // 构造函数
     public TimerInteractor(long totalTimePerPlayer, TimerOutputBoundary outputBoundary) {
         this.player1Timer = new Timer(totalTimePerPlayer);
         this.player2Timer = new Timer(totalTimePerPlayer);
@@ -54,7 +55,7 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     public void resumeTimer() {
         paused = false;
         synchronized (this) {
-            this.notify(); // Wake up the waiting thread
+            this.notify(); // 唤醒等待的线程
         }
     }
 
@@ -81,16 +82,16 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
             if (paused) {
                 synchronized (this) {
                     try {
-                        this.wait(); // Wait until notified to resume
+                        this.wait(); // 等待直到被唤醒
                     } catch (InterruptedException e) {
                         if (!running) {
-                            // Exit loop if not running
+                            // 如果不再运行，退出循环
                             break;
                         }
                         e.printStackTrace();
                     }
                 }
-                previousTime = System.currentTimeMillis(); // Reset time after pause
+                previousTime = System.currentTimeMillis(); // 暂停后重置时间
                 continue;
             }
             long currentTime = System.currentTimeMillis();
@@ -107,15 +108,15 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
 
             if (player1Timer.isTimeUp() || player2Timer.isTimeUp()) {
                 running = false;
-                // Notify which player's time is up
+                // 通知哪个玩家的时间到了
                 outputBoundary.timeUp(isPlayer1Turn ? 1 : 2);
             }
 
             try {
-                Thread.sleep(100); // Update every 100 milliseconds
+                Thread.sleep(100); // 每100毫秒更新一次
             } catch (InterruptedException e) {
                 if (!running) {
-                    // Exit loop if not running
+                    // 如果不再运行，退出循环
                     break;
                 }
                 e.printStackTrace();
