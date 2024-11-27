@@ -1,10 +1,10 @@
 package interface_adapter.controller;
 
 import interface_adapter.timer.TimerController;
-import use_case.timer.TimerInteractor;
-import view.timer.TimerPresenter;
 import view.timer.TimerView;
 import view.timer.TimerViewModel;
+import view.timer.TimerPresenter;
+import use_case.timer.TimerInteractor;
 
 import javax.swing.*;
 
@@ -16,7 +16,7 @@ public class TimerManager {
     private final long totalTimePerPlayer;
     private RestartListener restartListener;
 
-    // 构造函数，接受每个玩家的总时间和 TimerView 实例
+    // 构造函数
     public TimerManager(long totalTimePerPlayer, TimerView timerView) {
         this.totalTimePerPlayer = totalTimePerPlayer;
         this.timerView = timerView;
@@ -76,15 +76,22 @@ public class TimerManager {
 
     // 重置定时器并通知重新开始游戏
     public void resetTimerAndGame() {
+        // 停止计时器线程
         timerController.stopGame();
+        // 重置计时器
         timerController.resetTimers();
-        timerController.startGame();
+        // 重置暂停状态
         isPaused = false;
+        timerView.setPaused(isPaused);
+        // 重新启动计时器线程
+        timerController.startGame();
+        // 如果计时器线程处于等待状态，调用 resumeGame() 唤醒线程
+        timerController.resumeGame();
+        // 重启回合切换定时器
         if (switchTurnTimer != null) {
             switchTurnTimer.restart();
         }
-        timerView.setPaused(isPaused);
-        // 通知其他组件
+        // 通知其他组件（如游戏棋盘）重启
         if (restartListener != null) {
             restartListener.onRestart();
         }
