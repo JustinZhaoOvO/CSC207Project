@@ -131,7 +131,6 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-
         if (evt.getNewValue() instanceof BoardState newValue){
             String propertyName = evt.getPropertyName();
             switch (propertyName) {
@@ -147,6 +146,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                 case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
             }
         }else if (evt.getNewValue() instanceof WindowState newValue){
+            System.out.println(newValue);
             String propertyName = evt.getPropertyName();
             if ("paused".equals(propertyName)){
                 if (newValue.isPaused()){

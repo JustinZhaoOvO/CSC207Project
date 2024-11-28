@@ -1,65 +1,70 @@
 package interface_adapter.window;
 
+import interface_adapter.ViewModel;
+
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
-public class WindowViewModel {
-
-    private final PropertyChangeSupport support;
-    private final String viewName;
-    private WindowState windowState;
+public class WindowViewModel extends ViewModel<WindowState> {
 
     public WindowViewModel(String viewName) {
-        this.viewName = viewName;
-        this.support = new PropertyChangeSupport(this);
-        this.windowState = new WindowState();
+        super(viewName);
     }
 
-    // 添加监听器
-    public void addPropertyChangeListener(PropertyChangeListener pcl) {
-        support.addPropertyChangeListener(pcl);
-    }
+//    private final PropertyChangeSupport support;
+//    private final String viewName;
+//    private WindowState windowState;
+//
+//    public WindowViewModel(String viewName) {
+//        this.viewName = viewName;
+//        this.support = new PropertyChangeSupport(this);
+//        this.windowState = new WindowState();
+//    }
+//
+//    // 添加监听器
+//    public void addPropertyChangeListener(PropertyChangeListener pcl) {
+//        support.addPropertyChangeListener(pcl);
+//    }
 
     // 移除监听器
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         support.removePropertyChangeListener(pcl);
     }
 
-    // 设置整个状态
-    public void setState(WindowState newState) {
-        this.windowState = newState;
-    }
+//    // 设置整个状态
+//    public void setState(WindowState newState) {
+//        this.windowState = newState;
+//    }
 
     // 为特定属性触发属性更改事件
-    public void firePropertyChanged(String propertyName) {
-        Object newValue = null;
-
-        switch (propertyName) {
-            case "paused":
-                newValue = windowState.isPaused();
-                break;
-            case "restart":
-                newValue = windowState.isRestart();
-                break;
-            case "switchTurn":
-                newValue = windowState.isSwitchTurn();
-                break;
-            case "gameOver":
-                newValue = windowState.isGameOver();
-                break;
-            case "blackRanOutOfTime":
-                newValue = windowState.isBlackRanOutOfTime();
-                break;
-            case "move":
-                newValue = windowState.getMove();
-                break;
-            default:
-                // 无效的属性名称
-                return;
-        }
-
-        support.firePropertyChange(propertyName, null, newValue);
-    }
+//    public void firePropertyChanged(String propertyName) {
+//        Object newValue = null;
+//
+//        switch (propertyName) {
+//            case "paused":
+//                newValue = windowState.isPaused();
+//                break;
+//            case "restart":
+//                newValue = windowState.isRestart();
+//                break;
+//            case "switchTurn":
+//                newValue = windowState.isSwitchTurn();
+//                break;
+//            case "gameOver":
+//                newValue = windowState.isGameOver();
+//                break;
+//            case "blackRanOutOfTime":
+//                newValue = windowState.isBlackRanOutOfTime();
+//                break;
+//            case "move":
+//                newValue = windowState.getMove();
+//                break;
+//            default:
+//                // 无效的属性名称
+//                return;
+//        }
+//
+//        support.firePropertyChange(propertyName, null, newValue);
+//    }
 
     // 现有的 Setter 方法（可选，如果需要在其他地方使用）
     public void setPaused(boolean paused) {
@@ -103,7 +108,7 @@ public class WindowViewModel {
         return windowState;
     }
 
-    public String getViewName() {
-        return viewName;
-    }
+//    public String getViewName() {
+//        return viewName;
+//    }
 }
