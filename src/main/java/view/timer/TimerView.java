@@ -18,16 +18,18 @@ public class TimerView extends JPanel implements PropertyChangeListener {
     private JButton restartButton;
     private boolean isPaused;
     private final long totalTime; // 每个玩家的总时间（毫秒）
+    private boolean gameOver;
 
     // 构造函数，接受每个玩家的总时间作为参数
     public TimerView(long totalTimePerPlayer) {
         this.setPreferredSize(new Dimension(200, 600));
         this.player1Time = totalTimePerPlayer;
         this.player2Time = totalTimePerPlayer;
-        this.isPlayer1Turn = true;
+        this.isPlayer1Turn = false;
         this.timeUpPlayer = 0;
         this.isPaused = false;
         this.totalTime = totalTimePerPlayer;
+        this.gameOver = false;
 
         setLayout(null); // 使用绝对定位
 
@@ -105,9 +107,34 @@ public class TimerView extends JPanel implements PropertyChangeListener {
             case "player1Time" -> player1Time = (long) evt.getNewValue();
             case "player2Time" -> player2Time = (long) evt.getNewValue();
             case "isPlayer1Turn" -> isPlayer1Turn = (boolean) evt.getNewValue();
-            case "timeUp" -> timeUpPlayer = (int) evt.getNewValue();
+            case "timeUp" -> {
+                timeUpPlayer = (int) evt.getNewValue();
+                gameOver = true;
+            }
+            case "gameOver" -> gameOver = (boolean) evt.getNewValue();
+            case "paused" -> {
+                isPaused = (boolean) evt.getNewValue();
+                setPaused(isPaused);
+            }
+            case "restart" -> {
+                boolean isRestart = (boolean) evt.getNewValue();
+                if (isRestart) {
+                    // 重置计时器视图的状态
+                    resetView();
+                }
+            }
         }
         repaint(); // 当属性变化时重绘面板
+    }
+
+    private void resetView() {
+        this.player1Time = totalTime;
+        this.player2Time = totalTime;
+        this.isPlayer1Turn = false;
+        this.timeUpPlayer = 0;
+        this.isPaused = false;
+        this.gameOver = false;
+        showPauseButton();
     }
 
     @Override
@@ -193,9 +220,11 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         textWidth = fm.stringWidth(timeText2);
         g2.drawString(timeText2, (width - textWidth) / 2, player2Y + blockHeight - 10);
 
-        // 如果有玩家时间到，显示提示信息
-        if (timeUpPlayer != 0) {
-            String message = "Player " + timeUpPlayer + " time is up!";
+        // 如果有玩家时间到或游戏结束，显示提示信息
+        if (gameOver) {
+            String message = timeUpPlayer != 0
+                    ? "Player " + timeUpPlayer + " time is up!"
+                    : "Game Over!";
             g2.setFont(new Font("Arial", Font.BOLD, 24));
             g2.setColor(Color.RED);
             textWidth = g2.getFontMetrics().stringWidth(message);
