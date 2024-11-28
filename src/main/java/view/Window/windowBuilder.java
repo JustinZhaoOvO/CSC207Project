@@ -34,18 +34,17 @@ public class windowBuilder {
     }
 
     public windowBuilder addBoard(){
-        //initialize board and layout
+        // Initialize board and layout
         BoardView boardView = new BoardView(windowViewModel);
         boardView.setLayout(new BoardLayout());
 
-        //initalize boardView in windowView and layout
+        // Initialize boardView in windowView and layout
         this.windowView.setBoardView(boardView);
         this.windowView.add(boardView);
         this.windowLayout.setBoardView(boardView);
         this.windowViewModel.addPropertyChangeListener(boardView);
 
-
-        //initialize the controllers
+        // Initialize the controllers
         BoardViewModel boardViewModel = new BoardViewModel();
         RepaintBoardPresenter repaintBoardPresenter = new RepaintBoardPresenter(boardViewModel);
         RepaintBoardInteractor repaintBoardInteractor = new RepaintBoardInteractor(repaintBoardPresenter);
@@ -55,16 +54,16 @@ public class windowBuilder {
         SelectInteractor selectInteractor = new SelectInteractor(selectPresenter);
         SelectController selectController = new SelectController(selectInteractor);
 
-        MovePresenter movePresenter = new MovePresenter(boardViewModel,repaintBoardController, selectController, windowViewModel);
+        MovePresenter movePresenter = new MovePresenter(boardViewModel, repaintBoardController, selectController, windowViewModel);
         MoveInteractor moveInteractor = new MoveInteractor(movePresenter);
         MoveController moveController = new MoveController(moveInteractor);
 
-        //set Controllers
+        // Set Controllers
         boardView.setRepaintBoardController(repaintBoardController);
         boardView.setSelectController(selectController);
         boardView.setMoveController(moveController);
 
-        //add BoardView to the listener list of BoardViewModel
+        // Add BoardView to the listener list of BoardViewModel
         boardViewModel.addPropertyChangeListener(boardView);
 
         return this;
@@ -86,10 +85,6 @@ public class windowBuilder {
 
         return this;
     }
-
-
-
-
 
     public WindowView build() {
         return windowView;
