@@ -20,7 +20,7 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
         this.outputBoundary = outputBoundary;
         this.running = false;
         this.paused = false;
-        this.isPlayer1Turn = true;
+        this.isPlayer1Turn = false;
     }
 
     @Override

@@ -71,17 +71,17 @@ public class windowBuilder {
     }
 
     public windowBuilder addTimer(){
-        // 初始化计时器组件
-        long totalTimePerPlayer = 5 * 60 * 1000; // 每个玩家5分钟
+        // Initialize timer components
+        long totalTimePerPlayer = 5 * 60 * 1000; // 5 minutes per player
         TimerView timerView = new TimerView(totalTimePerPlayer);
 
-        // 实例化 TimerManager
-        timerManager = new TimerManager(totalTimePerPlayer, timerView);
+        // Instantiate TimerManager with WindowViewModel
+        timerManager = new TimerManager(totalTimePerPlayer, timerView, windowViewModel);
 
-        // 将 TimerView 添加到 windowView
+        // Add TimerView to windowView
         this.windowView.add(timerView);
 
-        // 将 TimerView 设置到布局中
+        // Set TimerView in layout
         this.windowLayout.setTimerView(timerView);
 
         return this;

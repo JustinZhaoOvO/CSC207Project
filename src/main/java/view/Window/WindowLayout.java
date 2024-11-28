@@ -26,7 +26,7 @@ public class WindowLayout extends LayoutAdapter {
         int timerWidth = Math.min(parent.getWidth() / 5, parent.getHeight());
         super.layoutContainer(parent);
         boardView.setBounds(0, 0, len, len);
-        timerView.setBounds(600,0,timerWidth,600);
+        timerView.setBounds(800,0,timerWidth,600);
 
         super.layoutContainer(parent);
     }
