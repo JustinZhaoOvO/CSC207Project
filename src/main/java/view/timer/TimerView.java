@@ -9,23 +9,23 @@ import java.beans.PropertyChangeListener;
 import java.awt.event.ActionListener;
 
 public class TimerView extends JPanel implements PropertyChangeListener {
-    private long player1Time; // Player 1 剩余时间
-    private long player2Time; // Player 2 剩余时间
-    private boolean isPlayer1Turn; // 是否为 Player 1 的回合
-    private int timeUpPlayer; // 时间到的玩家编号（1 或 2）
-    private JButton pauseButton;
-    private JButton startButton;
-    private JButton restartButton;
-    private boolean isPaused;
-    private final long totalTime; // 每个玩家的总时间（毫秒）
-    private boolean gameOver;
+    long player1Time; // Player 1 剩余时间
+    long player2Time; // Player 2 剩余时间
+    boolean isPlayer1Turn; // 是否为 Player 1 的回合
+    int timeUpPlayer; // 时间到的玩家编号（1 或 2）
+    JButton pauseButton;
+    JButton startButton;
+    JButton restartButton;
+    boolean isPaused;
+    final long totalTime; // 每个玩家的总时间（毫秒）
+    boolean gameOver;
 
     // 构造函数，接受每个玩家的总时间作为参数
     public TimerView(long totalTimePerPlayer) {
         this.setPreferredSize(new Dimension(200, 600));
         this.player1Time = totalTimePerPlayer;
         this.player2Time = totalTimePerPlayer;
-        this.isPlayer1Turn = false;
+        this.isPlayer1Turn = true;
         this.timeUpPlayer = 0;
         this.isPaused = false;
         this.totalTime = totalTimePerPlayer;
@@ -94,11 +94,27 @@ public class TimerView extends JPanel implements PropertyChangeListener {
     public void showPauseButton() {
         pauseButton.setVisible(true);
         startButton.setVisible(false);
+        pauseButton.setEnabled(true);
+        startButton.setEnabled(false);
     }
 
     public void showStartButton() {
         pauseButton.setVisible(false);
         startButton.setVisible(true);
+        pauseButton.setEnabled(false);
+        startButton.setEnabled(true);
+    }
+
+    // 新增方法：禁用暂停和开始按钮
+    public void disablePauseAndStartButtons() {
+        pauseButton.setEnabled(false);
+        startButton.setEnabled(false);
+    }
+
+    // 新增方法：启用暂停和开始按钮
+    public void enablePauseAndStartButtons() {
+        pauseButton.setEnabled(true);
+        startButton.setEnabled(true);
     }
 
     @Override
@@ -110,8 +126,14 @@ public class TimerView extends JPanel implements PropertyChangeListener {
             case "timeUp" -> {
                 timeUpPlayer = (int) evt.getNewValue();
                 gameOver = true;
+                disablePauseAndStartButtons();
             }
-            case "gameOver" -> gameOver = (boolean) evt.getNewValue();
+            case "gameOver" -> {
+                gameOver = (boolean) evt.getNewValue();
+                if (gameOver) {
+                    disablePauseAndStartButtons();
+                }
+            }
             case "paused" -> {
                 isPaused = (boolean) evt.getNewValue();
                 setPaused(isPaused);
@@ -130,11 +152,12 @@ public class TimerView extends JPanel implements PropertyChangeListener {
     private void resetView() {
         this.player1Time = totalTime;
         this.player2Time = totalTime;
-        this.isPlayer1Turn = false;
+        this.isPlayer1Turn = true;
         this.timeUpPlayer = 0;
         this.isPaused = false;
         this.gameOver = false;
         showPauseButton();
+        enablePauseAndStartButtons();
     }
 
     @Override
@@ -180,7 +203,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         // 绘制 Player 1 的信息
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("Arial", Font.BOLD, 16));
-        String player1Text = "Player 1";
+        String player1Text = "White";
         FontMetrics fm = g2.getFontMetrics();
         int textWidth = fm.stringWidth(player1Text);
         g2.drawString(player1Text, (width - textWidth) / 2, player1Y + 20);
@@ -211,7 +234,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
 
         // 绘制 Player 2 的信息
         g2.setColor(Color.BLACK);
-        String player2Text = "Player 2";
+        String player2Text = "Black";
         textWidth = fm.stringWidth(player2Text);
         g2.drawString(player2Text, (width - textWidth) / 2, player2Y + 20);
 
@@ -223,7 +246,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         // 如果有玩家时间到或游戏结束，显示提示信息
         if (gameOver) {
             String message = timeUpPlayer != 0
-                    ? "Player " + timeUpPlayer + " time is up!"
+                    ? "Player " + (timeUpPlayer == 1 ? "White" : "Black") + " time is up!"
                     : "Game Over!";
             g2.setFont(new Font("Arial", Font.BOLD, 24));
             g2.setColor(Color.RED);

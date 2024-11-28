@@ -15,22 +15,22 @@ public class WindowViewModel {
         this.windowState = new WindowState();
     }
 
-    // Add listener
+    // 添加监听器
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         support.addPropertyChangeListener(pcl);
     }
 
-    // Remove listener
+    // 移除监听器
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         support.removePropertyChangeListener(pcl);
     }
 
-    // New setState method
+    // 设置整个状态
     public void setState(WindowState newState) {
         this.windowState = newState;
     }
 
-    // New firePropertyChanged method
+    // 为特定属性触发属性更改事件
     public void firePropertyChanged(String propertyName) {
         Object newValue = null;
 
@@ -54,14 +54,14 @@ public class WindowViewModel {
                 newValue = windowState.getMove();
                 break;
             default:
-                // Invalid property name
+                // 无效的属性名称
                 return;
         }
 
         support.firePropertyChange(propertyName, null, newValue);
     }
 
-    // Existing setters (optional if needed elsewhere)
+    // 现有的 Setter 方法（可选，如果需要在其他地方使用）
     public void setPaused(boolean paused) {
         boolean oldPaused = windowState.isPaused();
         windowState.setPaused(paused);
@@ -98,7 +98,7 @@ public class WindowViewModel {
         support.firePropertyChange("move", oldMove, move);
     }
 
-    // Getter
+    // Getter 方法
     public WindowState getWindowState() {
         return windowState;
     }
