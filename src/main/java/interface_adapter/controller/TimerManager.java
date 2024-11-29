@@ -1,6 +1,7 @@
 package interface_adapter.controller;
 
 import interface_adapter.timer.TimerController;
+import interface_adapter.window.WindowState;
 import interface_adapter.window.WindowViewModel;
 import use_case.timer.TimerInteractor;
 import view.timer.TimerPresenter;
@@ -87,7 +88,7 @@ public class TimerManager {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("switchTurn".equals(evt.getPropertyName())) {
-                    boolean switchTurn = (boolean) evt.getNewValue();
+                    boolean switchTurn = ((WindowState) evt.getNewValue()).isSwitchTurn();
                     if (switchTurn) {
                         System.out.println("TimerManager detected switchTurn");
                         timerController.switchTurn();
@@ -97,7 +98,7 @@ public class TimerManager {
                 }
 
                 if ("gameOver".equals(evt.getPropertyName())) {
-                    boolean gameOver = (boolean) evt.getNewValue();
+                    boolean gameOver = ((WindowState) evt.getNewValue()).isGameOver();
                     if (gameOver) {
                         System.out.println("TimerManager detected gameOver");
                         timerController.stopGame();

@@ -146,7 +146,6 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                 case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
             }
         }else if (evt.getNewValue() instanceof WindowState newValue){
-            System.out.println(newValue);
             String propertyName = evt.getPropertyName();
             if ("paused".equals(propertyName)){
                 if (newValue.isPaused()){
@@ -155,12 +154,14 @@ public class BoardView extends JPanel implements PropertyChangeListener {
                     unfreezeBoard();
                 }
             }else if ("restart".equals(propertyName)){
-                if (!this.gameOver){// stop timer, Update scores
-                    WindowState windowState = new WindowState();
-                    windowState.setGameOver(true);
-                    windowViewModel.setState(windowState);
-                    windowViewModel.firePropertyChanged("gameOver");
-                    forfeit();
+                if (newValue.isRestart()){
+                    if (!this.gameOver){// stop timer, Update scores
+                        WindowState windowState = new WindowState();
+                        windowState.setGameOver(true);
+                        windowViewModel.setState(windowState);
+                        windowViewModel.firePropertyChanged("gameOver");
+                        forfeit();
+                    }
                 }restartTheGameWith(new ChariotBoard());
             }else if ("blackRanOutOfTime".equals(propertyName)){
                 timeOut(newValue.isBlackRanOutOfTime());

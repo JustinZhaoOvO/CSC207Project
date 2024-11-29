@@ -1,6 +1,8 @@
 package view.timer;
 
 import entity.ImageConstants;
+import interface_adapter.window.WindowState;
+import interface_adapter.window.WindowViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -129,17 +131,17 @@ public class TimerView extends JPanel implements PropertyChangeListener {
                 disablePauseAndStartButtons();
             }
             case "gameOver" -> {
-                gameOver = (boolean) evt.getNewValue();
+                gameOver = ((WindowState) evt.getNewValue()).isGameOver();
                 if (gameOver) {
                     disablePauseAndStartButtons();
                 }
             }
             case "paused" -> {
-                isPaused = (boolean) evt.getNewValue();
+                isPaused = ((WindowState) evt.getNewValue()).isPaused();
                 setPaused(isPaused);
             }
             case "restart" -> {
-                boolean isRestart = (boolean) evt.getNewValue();
+                boolean isRestart = ((WindowState) evt.getNewValue()).isRestart();
                 if (isRestart) {
                     // 重置计时器视图的状态
                     resetView();

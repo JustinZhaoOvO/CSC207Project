@@ -35,6 +35,7 @@ public class MoveInteractor implements MoveInputBoundary{
             if (board.isPromotionMove(move)){   //promotion
                 moveOutputData.setPromotion(true);
             }else{  //move
+                System.out.println(move);
                 board.move(move);
                 moveOutputData.setRepaint(true);
                 moveOutputData.setMoved(true);
