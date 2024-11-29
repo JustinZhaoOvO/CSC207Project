@@ -6,15 +6,18 @@ package use_case.login;
 public class LoginOutputData {
 
     private final String username;
-    private final boolean useCaseFailed;
+    private final boolean isPlayer1;
 
-    public LoginOutputData(String username, boolean useCaseFailed) {
+    public LoginOutputData(String username, boolean isPlayer1) {
         this.username = username;
-        this.useCaseFailed = useCaseFailed;
+        this.isPlayer1 = isPlayer1;
     }
 
     public String getUsername() {
         return username;
     }
 
+    public boolean isPlayer1() {
+        return isPlayer1;
+    }
 }

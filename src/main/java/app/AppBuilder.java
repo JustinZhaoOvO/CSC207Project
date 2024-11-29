@@ -1,6 +1,6 @@
 package app;
 
-import data_access.InMemoryUserDataAccessObject;
+import data_access.FileUserDataAccessObject;
 import entity.CommonUserFactory;
 import entity.UserFactory;
 import interface_adapter.ViewManagerModel;
@@ -34,113 +34,115 @@ import view.ViewManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
- * The AppBuilder class is responsible for putting together the pieces of
- * our CA architecture; piece by piece.
- * <p/>
- * This is done by adding each View and then adding related Use Cases.
+ * The AppBuilder class is responsible for constructing the application components.
  */
-// Checkstyle note: you can ignore the "Class Data Abstraction Coupling"
-//                  and the "Class Fan-Out Complexity" issues for this lab; we encourage
-//                  your team to think about ways to refactor the code to resolve these
-//                  if your team decides to work with this as your starter code
-//                  for your final project this term.
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
     private final CardLayout cardLayout = new CardLayout();
-    // thought question: is the hard dependency below a problem?
     private final UserFactory userFactory = new CommonUserFactory();
     private final ViewManagerModel viewManagerModel = new ViewManagerModel();
     private final ViewManager viewManager = new ViewManager(cardPanel, cardLayout, viewManagerModel);
 
-    // thought question: is the hard dependency below a problem?
-    private final InMemoryUserDataAccessObject userDataAccessObject = new InMemoryUserDataAccessObject();
+    private FileUserDataAccessObject fileUserDataAccessObject;
 
-    private SignupView signupView;
-    private SignupViewModel signupViewModel;
-    private LoginViewModel loginViewModel;
-    private LoggedInViewModel loggedInViewModel;
+    // Views
+    private SignupView signupViewPlayer1;
+    private SignupView signupViewPlayer2;
+    private SignupViewModel signupViewModelPlayer1;
+    private SignupViewModel signupViewModelPlayer2;
+
+    private LoginView loginViewPlayer1;
+    private LoginView loginViewPlayer2;
+    private LoginViewModel loginViewModelPlayer1;
+    private LoginViewModel loginViewModelPlayer2;
+
     private LoggedInView loggedInView;
-    private LoginView loginView;
+    private LoggedInViewModel loggedInViewModel;
 
     public AppBuilder() {
+        try {
+            // Set the path to the CSV file where user data will be stored
+            String csvPath = "users.csv"; // Adjust the path as necessary
+            fileUserDataAccessObject = new FileUserDataAccessObject(csvPath, userFactory);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to initialize FileUserDataAccessObject: " + e.getMessage(), e);
+        }
+
         cardPanel.setLayout(cardLayout);
     }
 
-    /**
-     * Adds the Signup View to the application.
-     * @return this builder
-     */
     public AppBuilder addSignupView() {
-        signupViewModel = new SignupViewModel();
-        signupView = new SignupView(signupViewModel);
-        cardPanel.add(signupView, signupView.getViewName());
+        signupViewModelPlayer1 = new SignupViewModel();
+        signupViewPlayer1 = new SignupView(signupViewModelPlayer1, ViewStates.SIGNUP_PLAYER1, viewManagerModel);
+
+        signupViewModelPlayer2 = new SignupViewModel();
+        signupViewPlayer2 = new SignupView(signupViewModelPlayer2, ViewStates.SIGNUP_PLAYER2, viewManagerModel);
+
+        cardPanel.add(signupViewPlayer1, ViewStates.SIGNUP_PLAYER1);
+        cardPanel.add(signupViewPlayer2, ViewStates.SIGNUP_PLAYER2);
         return this;
     }
 
-    /**
-     * Adds the Login View to the application.
-     * @return this builder
-     */
     public AppBuilder addLoginView() {
-        loginViewModel = new LoginViewModel();
-        loginView = new LoginView(loginViewModel);
-        cardPanel.add(loginView, loginView.getViewName());
+        loginViewModelPlayer1 = new LoginViewModel();
+        loginViewPlayer1 = new LoginView(loginViewModelPlayer1, ViewStates.LOGIN_PLAYER1, viewManagerModel);
+
+        loginViewModelPlayer2 = new LoginViewModel();
+        loginViewPlayer2 = new LoginView(loginViewModelPlayer2, ViewStates.LOGIN_PLAYER2, viewManagerModel);
+
+        cardPanel.add(loginViewPlayer1, ViewStates.LOGIN_PLAYER1);
+        cardPanel.add(loginViewPlayer2, ViewStates.LOGIN_PLAYER2);
         return this;
     }
 
-    /**
-     * Adds the LoggedIn View to the application.
-     * @return this builder
-     */
     public AppBuilder addLoggedInView() {
         loggedInViewModel = new LoggedInViewModel();
         loggedInView = new LoggedInView(loggedInViewModel);
-        cardPanel.add(loggedInView, loggedInView.getViewName());
+        cardPanel.add(loggedInView, ViewStates.LOGGED_IN_VIEW);
         return this;
     }
 
-    /**
-     * Adds the Signup Use Case to the application.
-     * @return this builder
-     */
     public AppBuilder addSignupUseCase() {
-        final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel,
-                signupViewModel, loginViewModel);
+        final SignupOutputBoundary signupOutputBoundary = new SignupPresenter(
+                viewManagerModel, signupViewModelPlayer1, signupViewModelPlayer2,
+                loginViewModelPlayer1, loginViewModelPlayer2
+        );
         final SignupInputBoundary userSignupInteractor = new SignupInteractor(
-                userDataAccessObject, signupOutputBoundary, userFactory);
+                fileUserDataAccessObject, signupOutputBoundary, userFactory
+        );
 
-        final SignupController controller = new SignupController(userSignupInteractor);
-        signupView.setSignupController(controller);
+        final SignupController signupController = new SignupController(userSignupInteractor);
+        signupViewPlayer1.setSignupController(signupController);
+        signupViewPlayer2.setSignupController(signupController);
+
         return this;
     }
 
-    /**
-     * Adds the Login Use Case to the application.
-     * @return this builder
-     */
     public AppBuilder addLoginUseCase() {
-        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel);
+        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(
+                viewManagerModel,
+                loginViewModelPlayer1, loginViewModelPlayer2
+        );
         final LoginInputBoundary loginInteractor = new LoginInteractor(
-                userDataAccessObject, loginOutputBoundary);
+                fileUserDataAccessObject, loginOutputBoundary
+        );
 
         final LoginController loginController = new LoginController(loginInteractor);
-        loginView.setLoginController(loginController);
+        loginViewPlayer1.setLoginController(loginController);
+        loginViewPlayer2.setLoginController(loginController);
+
         return this;
     }
 
-    /**
-     * Adds the Change Password Use Case to the application.
-     * @return this builder
-     */
     public AppBuilder addChangePasswordUseCase() {
         final ChangePasswordOutputBoundary changePasswordOutputBoundary =
                 new ChangePasswordPresenter(loggedInViewModel);
 
         final ChangePasswordInputBoundary changePasswordInteractor =
-                new ChangePasswordInteractor(userDataAccessObject, changePasswordOutputBoundary, userFactory);
+                new ChangePasswordInteractor(fileUserDataAccessObject, changePasswordOutputBoundary, userFactory);
 
         final ChangePasswordController changePasswordController =
                 new ChangePasswordController(changePasswordInteractor);
@@ -148,34 +150,21 @@ public class AppBuilder {
         return this;
     }
 
-    /**
-     * Adds the Logout Use Case to the application.
-     * @return this builder
-     */
-    public AppBuilder addLogoutUseCase() {
-        final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel);
-
-        final LogoutInputBoundary logoutInteractor =
-                new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
-
-        final LogoutController logoutController = new LogoutController(logoutInteractor);
-        loggedInView.setLogoutController(logoutController);
-        return this;
-    }
-
-    /**
-     * Creates the JFrame for the application and initially sets the SignupView to be displayed.
-     * @return the application
-     */
     public JFrame build() {
         final JFrame application = new JFrame("Chess Game");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         application.add(cardPanel);
 
-        viewManagerModel.setState(signupView.getViewName());
+        // Initialize the ViewManager to listen for state changes
+        viewManagerModel.addPropertyChangeListener(viewManager);
+
+        // Start the application with the signup view for Player 1
+        viewManagerModel.setState(ViewStates.SIGNUP_PLAYER1);
         viewManagerModel.firePropertyChanged();
+
+        application.pack();
+        application.setLocationRelativeTo(null); // Center the window
+        application.setVisible(true);
 
         return application;
     }

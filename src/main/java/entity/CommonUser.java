@@ -5,8 +5,8 @@ package entity;
  */
 public class CommonUser implements User {
 
-    private final String name;
-    private final String password;
+    private final String name; // The name should be immutable
+    private String password; // Password should be mutable
 
     public CommonUser(String name, String password) {
         this.name = name;
@@ -23,4 +23,11 @@ public class CommonUser implements User {
         return password;
     }
 
+    @Override
+    public void setPassword(String newPassword) {
+        if (newPassword == null || newPassword.isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
+        this.password = newPassword;
+    }
 }

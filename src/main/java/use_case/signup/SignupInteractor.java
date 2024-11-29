@@ -21,29 +21,23 @@ public class SignupInteractor implements SignupInputBoundary {
 
     @Override
     public void execute(SignupInputData signupInputData) {
-        if (userDataAccessObject.existsByName(signupInputData.getUsername())) {
-            userPresenter.prepareFailView("User already exists.");
-        }
-        else if (!signupInputData.getPassword().equals(signupInputData.getRepeatPassword())) {
-            userPresenter.prepareFailView("Passwords don't match.");
-        }
-        else {
-            final User user = userFactory.create(signupInputData.getUsername(), signupInputData.getPassword());
+        final String username = signupInputData.getUsername();
+        final String password = signupInputData.getPassword();
+        final String repeatPassword = signupInputData.getRepeatPassword();
+        final boolean isPlayer1 = signupInputData.isPlayer1();
+
+        if (userDataAccessObject.existsByName(username)) {
+            userPresenter.prepareFailView("User already exists.", isPlayer1);
+            return;
+        } else if (!password.equals(repeatPassword)) {
+            userPresenter.prepareFailView("Passwords don't match.", isPlayer1);
+            return;
+        } else {
+            final User user = userFactory.create(username, password);
             userDataAccessObject.save(user);
 
-            final SignupOutputData signupOutputData = new SignupOutputData(user.getName(), false);
+            final SignupOutputData signupOutputData = new SignupOutputData(username, isPlayer1);
             userPresenter.prepareSuccessView(signupOutputData);
         }
-    }
-
-    @Override
-    public void switchToLoginView() {
-        userPresenter.switchToLoginView();
-    }
-
-    @Override
-    public void startGameWithPlayers(String player1, String player2) {
-        // Notify the presenter to transition to the game view
-        userPresenter.prepareGameStart(player1, player2);
     }
 }
