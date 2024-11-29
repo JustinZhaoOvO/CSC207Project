@@ -4,6 +4,7 @@ package view.Window;
 
 import entity.ChariotBoard;
 import view.BoardView.BoardView;
+import view.timer.TimerView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,7 @@ public class WindowView extends JPanel{
     private final String viewName = "Mainwindow";
 
     private BoardView boardView;
+    private TimerView timerView;
 
     public WindowView() {
 
@@ -22,6 +24,10 @@ public class WindowView extends JPanel{
         this.boardView = boardView;
     }
 
+    public void setTimerView(TimerView timerView) {
+        this.timerView = timerView;
+    }
+
     public void startTheGameWith(ChariotBoard chariotBoard){
         boardView.restartTheGameWith(chariotBoard);
     }
@@ -29,6 +35,8 @@ public class WindowView extends JPanel{
     public String getViewName() {
         return viewName;
     }
+
+
 
     @Override
     public void paint(Graphics g) {

@@ -1,7 +1,5 @@
 package interface_adapter.timer;
 
-import use_case.timer.TimerInputBoundary;
-
 public class TimerController {
     private final TimerInputBoundary interactor;
 

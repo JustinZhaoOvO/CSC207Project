@@ -3,6 +3,7 @@ package use_case.board.move;
 import entity.ChariotBoard;
 import entity.Coordinate;
 import interface_adapter.board.move.MoveController;
+import interface_adapter.controller.TimerManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -74,7 +75,8 @@ class MoveInteractorTest {
             public void prepareSuccessView(MoveOutputData outputData) {
                 assertTrue(outputData.board().equals(chariotBoard)
                         && outputData.getCoordinate().equals(Coordinate.fromString("b8"))
-                        && outputData.isRepaint());
+                        && outputData.isRepaint() && outputData.isMoved() &&
+                        "c6b8".equals(outputData.getMove()));
             }
 
             @Override
@@ -268,7 +270,7 @@ class MoveInteractorTest {
     }
 
     @Test
-    void promotionTest(){
+    void whitePromotionTest(){
         ChariotBoard chariotBoard = new ChariotBoard();
 
         chariotBoard.move("a2a4 b7b5 a4b5 a7a6 b5a6 b8c6 a6a7 c6b8");
@@ -291,5 +293,31 @@ class MoveInteractorTest {
 
         moveController.execute(chariotBoard,
                 Coordinate.fromString("b8"), chariotBoard.getValidMovesOfPosition("a7"));
+    }
+
+    @Test
+    void blackPromotionTest(){
+        ChariotBoard chariotBoard = new ChariotBoard();
+
+        chariotBoard.move("g2g4 h7h5 h2h3 h5g4 g1f3 g4h3 f1g2 h3g2 f3g5");
+
+        MoveOutputBoundary moveOutputBoundary = new MoveOutputBoundary() {
+            @Override
+            public void prepareSuccessView(MoveOutputData outputData) {
+                assertTrue(outputData.isPromotion());
+            }
+
+            @Override
+            public void prepareFailView(String errorMessage) {
+
+            }
+        };
+
+        MoveInteractor moveInteractor = new MoveInteractor(moveOutputBoundary);
+
+        MoveController moveController = new MoveController(moveInteractor);
+
+        moveController.execute(chariotBoard,
+                Coordinate.fromString("h1"), chariotBoard.getValidMovesOfPosition("g2"));
     }
 }

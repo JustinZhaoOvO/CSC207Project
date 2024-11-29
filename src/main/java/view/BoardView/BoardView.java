@@ -9,6 +9,8 @@ import interface_adapter.board.BoardState;
 import interface_adapter.board.move.MoveController;
 import interface_adapter.board.repaintboard.RepaintBoardController;
 import interface_adapter.board.select.SelectController;
+import interface_adapter.window.WindowState;
+import interface_adapter.window.WindowViewModel;
 import view.BoardView.PiecesView.PiecesListener;
 import view.BoardView.PiecesView.PiecesView;
 import view.BoardView.PromotionView.PromotionLayout;
@@ -50,7 +52,13 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private boolean Paused;
 
-    public BoardView() {
+    private boolean gameOver;
+
+    private final WindowViewModel windowViewModel;
+
+    public BoardView(WindowViewModel windowViewModel) {
+
+        this.windowViewModel = windowViewModel;
 
         //add Promotion Components
         this.blackPromotion = new PromotionView(true, this);
@@ -92,6 +100,7 @@ public class BoardView extends JPanel implements PropertyChangeListener {
         this.validMoves = null;
         this.Paused = false;
         this.MouseEventbanned = false;
+        this.gameOver = false;
 
         repaintBoardController.execute(chariotBoard);
     }
@@ -122,20 +131,43 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        String propertyName = evt.getPropertyName();
-        BoardState newValue = (BoardState) evt.getNewValue();
-        switch (propertyName) {
-            case BoardStateConstants.REPAINT -> {
-                if (newValue.getRepaintSuccess()) {
-                    repaintBoard(newValue);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Repainting the board failed");
+        if (evt.getNewValue() instanceof BoardState newValue){
+            String propertyName = evt.getPropertyName();
+            switch (propertyName) {
+                case BoardStateConstants.REPAINT -> {
+                    if (newValue.getRepaintSuccess()) {
+                        repaintBoard(newValue);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Repainting the board failed");
+                    }
                 }
+                case BoardStateConstants.SELECT -> selectHelper(newValue);
+                case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
+                case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
             }
-            case BoardStateConstants.SELECT -> selectHelper(newValue);
-            case BoardStateConstants.PROMOTION -> setPromotionComponentVisible(newValue.isBlackTurn());
-            case BoardStateConstants.GAMEOVER -> gameOver(newValue.getMsg());
+        }else if (evt.getNewValue() instanceof WindowState newValue){
+            String propertyName = evt.getPropertyName();
+            if ("paused".equals(propertyName)){
+                if (newValue.isPaused()){
+                    freezeBoard();
+                }else{
+                    unfreezeBoard();
+                }
+            }else if ("restart".equals(propertyName)){
+                if (newValue.isRestart()){
+                    if (!this.gameOver){// stop timer, Update scores
+                        WindowState windowState = new WindowState();
+                        windowState.setGameOver(true);
+                        windowViewModel.setState(windowState);
+                        windowViewModel.firePropertyChanged("gameOver");
+                        forfeit();
+                    }
+                }restartTheGameWith(new ChariotBoard());
+            }else if ("blackRanOutOfTime".equals(propertyName)){
+                timeOut(newValue.isBlackRanOutOfTime());
+            }
         }
+
     }
 
     public PiecesView[][] getBoard() {
@@ -205,9 +237,12 @@ public class BoardView extends JPanel implements PropertyChangeListener {
 
     private void gameOver(String msg) {
         this.MouseEventbanned = true;
-
-        //TODO : Update scores & clear records
+        this.gameOver = true;
         JOptionPane.showMessageDialog(this, msg);
+    }
+
+    public void timeOut(boolean blackRanOutOfTime){
+        gameOver(blackRanOutOfTime ?  "Black ran out of time! White win" : "White ran out of time! Black win");
     }
 
     public void forfeit(){

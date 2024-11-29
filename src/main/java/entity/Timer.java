@@ -1,16 +1,12 @@
 package entity;
 
 public class Timer {
-    private long remainingTime; // in milliseconds
-    private final long totalTime; // in milliseconds
+    private final long totalTime;
+    private long remainingTime;
 
     public Timer(long totalTime) {
         this.totalTime = totalTime;
         this.remainingTime = totalTime;
-    }
-
-    public long getRemainingTime() {
-        return remainingTime;
     }
 
     public void decrement(long deltaTime) {
@@ -24,11 +20,11 @@ public class Timer {
         remainingTime = totalTime;
     }
 
-    public boolean isTimeUp() {
-        return remainingTime <= 0;
+    public long getRemainingTime() {
+        return remainingTime;
     }
 
-    public long getTotalTime() {
-        return totalTime;
+    public boolean isTimeUp() {
+        return remainingTime <= 0;
     }
 }
