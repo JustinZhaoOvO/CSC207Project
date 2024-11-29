@@ -28,8 +28,28 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
     }
 
     @Override
+    public boolean authenticate(String username, String password) {
+        return false;
+    }
+
+    @Override
+    public void setCurrentUsername(String username, boolean isPlayer1) {
+
+    }
+
+    @Override
+    public String getCurrentUsername(boolean isPlayer1) {
+        return "";
+    }
+
+    @Override
     public void save(User user) {
         users.put(user.getName(), user);
+    }
+
+    @Override
+    public void logout(boolean isPlayer1) {
+
     }
 
     @Override

@@ -1,11 +1,11 @@
 package view;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import app.ViewStates;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;
+import interface_adapter.ViewManagerModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
@@ -15,9 +15,9 @@ import interface_adapter.signup.SignupViewModel;
  */
 public class SignupView extends JPanel implements PropertyChangeListener {
 
-    private final String viewName = "sign up";
-
+    private final String viewName;
     private final SignupViewModel signupViewModel;
+    private final ViewManagerModel viewManagerModel;
     private final JTextField usernameInputField = new JTextField(15);
     private final JPasswordField passwordInputField = new JPasswordField(15);
     private final JPasswordField repeatPasswordInputField = new JPasswordField(15);
@@ -26,30 +26,25 @@ public class SignupView extends JPanel implements PropertyChangeListener {
     private final JButton signUpButton;
     private final JButton toLoginButton;
 
-    private String player1Username;
-    private String player1Password;
+    private final JLabel titleLabel;
 
-    private String player2Username;
-    private String player2Password;
-
-    private boolean isPlayer1 = true; // Indicates which player is signing up
-
-    public SignupView(SignupViewModel signupViewModel) {
+    public SignupView(SignupViewModel signupViewModel, String viewName, ViewManagerModel viewManagerModel) {
         this.signupViewModel = signupViewModel;
+        this.viewName = viewName;
+        this.viewManagerModel = viewManagerModel;
         signupViewModel.addPropertyChangeListener(this);
 
         // Initialize components
-        final JLabel titleLabel = new JLabel("Sign Up - Player 1");
+        titleLabel = new JLabel(viewName.equals(ViewStates.SIGNUP_PLAYER1) ? "Sign Up - Player 1" : "Sign Up - Player 2");
         final JLabel usernameLabel = new JLabel("Choose Username:");
         final JLabel passwordLabel = new JLabel("Password:");
         final JLabel repeatPasswordLabel = new JLabel("Re-enter Password:");
 
         signUpButton = new JButton("Sign Up");
-        toLoginButton = new JButton("Back to Login");
+        toLoginButton = new JButton("Login Instead");
 
         // Add event listeners
-        signUpButton.addActionListener(evt -> handleSignUp());
-        toLoginButton.addActionListener(evt -> signupController.switchToLoginView());
+        addListeners();
 
         // Set layout
         this.setLayout(new GridBagLayout());
@@ -106,56 +101,42 @@ public class SignupView extends JPanel implements PropertyChangeListener {
     }
 
     /**
-     * Handles the signup process for Player 1 and Player 2.
+     * Add event listeners for components.
      */
-    private void handleSignUp() {
-        final SignupState currentState = signupViewModel.getState();
-        String username = currentState.getUsername();
-        String password = currentState.getPassword();
-        String repeatPassword = currentState.getRepeatPassword();
+    private void addListeners() {
+        signUpButton.addActionListener(evt -> {
+            String username = usernameInputField.getText().trim();
+            String password = new String(passwordInputField.getPassword());
+            String repeatPassword = new String(repeatPasswordInputField.getPassword());
 
-        if (!password.equals(repeatPassword)) {
-            JOptionPane.showMessageDialog(this, "Passwords do not match!");
-            return;
-        }
+            signupController.execute(username, password, repeatPassword, viewName.equals(ViewStates.SIGNUP_PLAYER1));
+        });
 
-        if (isPlayer1) {
-            // Save Player 1's credentials
-            player1Username = username;
-            player1Password = password;
-            isPlayer1 = false;
-
-            // Reset state and clear input fields
-            signupViewModel.resetState();
-            clearInputFields();
-
-            JOptionPane.showMessageDialog(this, "Player 1 registered! Now, Player 2, please sign up.");
-            ((JLabel) this.getComponent(0)).setText("Sign Up - Player 2");
-        } else {
-            // Save Player 2's credentials
-            player2Username = username;
-            player2Password = password;
-
-            JOptionPane.showMessageDialog(this, "Player 2 registered! Starting the game...");
-            signupController.startGameWithPlayers(player1Username, player2Username);
-        }
-    }
-
-    /**
-     * Clears all input fields in the signup form.
-     */
-    private void clearInputFields() {
-        usernameInputField.setText("");
-        passwordInputField.setText("");
-        repeatPasswordInputField.setText("");
+        toLoginButton.addActionListener(evt -> {
+            // Navigation to the login view
+            if (viewName.equals(ViewStates.SIGNUP_PLAYER1)) {
+                System.out.println("Navigating to LOGIN_PLAYER1");
+                viewManagerModel.setState(ViewStates.LOGIN_PLAYER1);
+            } else {
+                System.out.println("Navigating to LOGIN_PLAYER2");
+                viewManagerModel.setState(ViewStates.LOGIN_PLAYER2);
+            }
+            viewManagerModel.firePropertyChanged();
+        });
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final SignupState state = (SignupState) evt.getNewValue();
-        if (state.getUsernameError() != null) {
-            JOptionPane.showMessageDialog(this, state.getUsernameError());
-        }
+        SwingUtilities.invokeLater(() -> {
+            final SignupState state = (SignupState) evt.getNewValue();
+            if (state.getUsernameError() != null) {
+                JOptionPane.showMessageDialog(this, state.getUsernameError());
+                state.setUsernameError(null); // Reset error after displaying
+            } else {
+                JOptionPane.showMessageDialog(this, "Signup successful!");
+                // Navigation is handled by the presenter via ViewManagerModel
+            }
+        });
     }
 
     public String getViewName() {

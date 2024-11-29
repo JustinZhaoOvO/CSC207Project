@@ -1,16 +1,11 @@
 package view;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
+import app.ViewStates;
+import interface_adapter.ViewManagerModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
@@ -18,29 +13,33 @@ import interface_adapter.login.LoginViewModel;
 /**
  * The View for when the user is logging into the program.
  */
-public class LoginView extends JPanel implements ActionListener, PropertyChangeListener {
+public class LoginView extends JPanel implements PropertyChangeListener {
 
-    private final String viewName = "log in";
-
+    private final String viewName;
     private final LoginViewModel loginViewModel;
+    private final ViewManagerModel viewManagerModel;
     private final JTextField usernameInputField = new JTextField(15);
     private final JPasswordField passwordInputField = new JPasswordField(15);
     private LoginController loginController;
 
     private final JButton logInButton;
-    private final JButton cancelButton;
+    private final JButton backToSignupButton;
 
-    public LoginView(LoginViewModel loginViewModel) {
+    private final JLabel titleLabel;
+
+    public LoginView(LoginViewModel loginViewModel, String viewName, ViewManagerModel viewManagerModel) {
         this.loginViewModel = loginViewModel;
+        this.viewName = viewName;
+        this.viewManagerModel = viewManagerModel;
         this.loginViewModel.addPropertyChangeListener(this);
 
         // Initialize components
-        final JLabel titleLabel = new JLabel("Login Screen");
+        titleLabel = new JLabel(viewName.equals(ViewStates.LOGIN_PLAYER1) ? "Login - Player 1" : "Login - Player 2");
         final JLabel usernameLabel = new JLabel("Username:");
         final JLabel passwordLabel = new JLabel("Password:");
 
         logInButton = new JButton("Log In");
-        cancelButton = new JButton("Cancel");
+        backToSignupButton = new JButton("Back to Signup");
 
         // Add event listeners
         addListeners();
@@ -48,24 +47,24 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         // Set layout
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Padding around components
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Fill horizontally
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Title
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER; // Center title
+        gbc.anchor = GridBagConstraints.CENTER;
         this.add(titleLabel, gbc);
 
         // Username Label and Field
         gbc.gridwidth = 1;
         gbc.gridy++;
-        gbc.anchor = GridBagConstraints.LINE_END; // Align label to right
+        gbc.anchor = GridBagConstraints.LINE_END;
         this.add(usernameLabel, gbc);
 
         gbc.gridx = 1;
-        gbc.anchor = GridBagConstraints.LINE_START; // Align field to left
+        gbc.anchor = GridBagConstraints.LINE_START;
         this.add(usernameInputField, gbc);
 
         // Password Label and Field
@@ -85,7 +84,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         gbc.anchor = GridBagConstraints.CENTER;
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(logInButton);
-        buttonPanel.add(cancelButton);
+        buttonPanel.add(backToSignupButton);
         this.add(buttonPanel, gbc);
     }
 
@@ -94,59 +93,44 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
      */
     private void addListeners() {
         logInButton.addActionListener(evt -> {
-            final LoginState currentState = loginViewModel.getState();
-            loginController.execute(
-                    currentState.getUsername(),
-                    currentState.getPassword()
-            );
-        });
+            System.out.println("Log In button clicked"); // Debugging statement
+            String username = usernameInputField.getText().trim();
+            String password = new String(passwordInputField.getPassword());
 
-        cancelButton.addActionListener(evt -> JOptionPane.showMessageDialog(this, "Cancel action not implemented."));
-
-        // Add listeners to update state dynamically
-        addDocumentListener(usernameInputField, text -> {
-            LoginState state = loginViewModel.getState();
-            state.setUsername(text);
-            loginViewModel.setState(state);
-        });
-
-        addDocumentListener(passwordInputField, text -> {
-            LoginState state = loginViewModel.getState();
-            state.setPassword(text);
-            loginViewModel.setState(state);
-        });
-    }
-
-    /**
-     * Add a document listener to a text field or password field.
-     */
-    private void addDocumentListener(JTextField field, java.util.function.Consumer<String> callback) {
-        field.getDocument().addDocumentListener(new DocumentListener() {
-            private void update() {
-                callback.accept(field instanceof JPasswordField
-                        ? new String(((JPasswordField) field).getPassword())
-                        : field.getText());
+            if (loginController != null) {
+                loginController.execute(
+                        username,
+                        password,
+                        viewName.equals(ViewStates.LOGIN_PLAYER1) // isPlayer1 flag
+                );
+            } else {
+                System.out.println("LoginController is null!"); // Debugging statement
             }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) { update(); }
-            @Override
-            public void removeUpdate(DocumentEvent e) { update(); }
-            @Override
-            public void changedUpdate(DocumentEvent e) { update(); }
         });
-    }
 
-    @Override
-    public void actionPerformed(ActionEvent evt) {
-        JOptionPane.showMessageDialog(this, "Button action not implemented yet.");
+        backToSignupButton.addActionListener(evt -> {
+            // Navigation back to the signup view
+            if (viewName.equals(ViewStates.LOGIN_PLAYER1)) {
+                viewManagerModel.setState(ViewStates.SIGNUP_PLAYER1);
+            } else {
+                viewManagerModel.setState(ViewStates.SIGNUP_PLAYER2);
+            }
+            viewManagerModel.firePropertyChanged();
+        });
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final LoginState state = (LoginState) evt.getNewValue();
-        usernameInputField.setText(state.getUsername());
-        passwordInputField.setText(state.getPassword());
+        SwingUtilities.invokeLater(() -> {
+            final LoginState state = (LoginState) evt.getNewValue();
+            if (state.getLoginError() != null) {
+                JOptionPane.showMessageDialog(this, state.getLoginError());
+                state.setLoginError(null); // Reset error after displaying
+            } else {
+                JOptionPane.showMessageDialog(this, "Login successful!");
+                // Navigation is handled by the presenter via ViewManagerModel
+            }
+        });
     }
 
     public String getViewName() {

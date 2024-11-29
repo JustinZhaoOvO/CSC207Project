@@ -1,7 +1,7 @@
 package interface_adapter.signup;
 
+import app.ViewStates;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import use_case.signup.SignupOutputBoundary;
 import use_case.signup.SignupOutputData;
@@ -11,47 +11,50 @@ import use_case.signup.SignupOutputData;
  */
 public class SignupPresenter implements SignupOutputBoundary {
 
-    private final SignupViewModel signupViewModel;
-    private final LoginViewModel loginViewModel;
+    private final SignupViewModel signupViewModelPlayer1;
+    private final SignupViewModel signupViewModelPlayer2;
+    private final LoginViewModel loginViewModelPlayer1;
+    private final LoginViewModel loginViewModelPlayer2;
     private final ViewManagerModel viewManagerModel;
 
     public SignupPresenter(ViewManagerModel viewManagerModel,
-                           SignupViewModel signupViewModel,
-                           LoginViewModel loginViewModel) {
+                           SignupViewModel signupViewModelPlayer1,
+                           SignupViewModel signupViewModelPlayer2,
+                           LoginViewModel loginViewModelPlayer1,
+                           LoginViewModel loginViewModelPlayer2) {
         this.viewManagerModel = viewManagerModel;
-        this.signupViewModel = signupViewModel;
-        this.loginViewModel = loginViewModel;
+        this.signupViewModelPlayer1 = signupViewModelPlayer1;
+        this.signupViewModelPlayer2 = signupViewModelPlayer2;
+        this.loginViewModelPlayer1 = loginViewModelPlayer1;
+        this.loginViewModelPlayer2 = loginViewModelPlayer2;
     }
 
     @Override
     public void prepareSuccessView(SignupOutputData response) {
-        // On success, switch to the login view.
-        final LoginState loginState = loginViewModel.getState();
-        loginState.setUsername(response.getUsername());
-        this.loginViewModel.setState(loginState);
-        loginViewModel.firePropertyChanged();
-
-        viewManagerModel.setState(loginViewModel.getViewName());
+        // Transition to the appropriate login view
+        if (response.isPlayer1()) {
+            viewManagerModel.setState(ViewStates.LOGIN_PLAYER1);
+        } else {
+            viewManagerModel.setState(ViewStates.LOGIN_PLAYER2);
+        }
         viewManagerModel.firePropertyChanged();
     }
 
     @Override
-    public void prepareFailView(String error) {
-        final SignupState signupState = signupViewModel.getState();
+    public void prepareSuccessView(SignupOutputData outputData, boolean isPlayer1) {
+
+    }
+
+    @Override
+    public void prepareFailView(String error, boolean isPlayer1) {
+        final SignupState signupState = isPlayer1
+                ? signupViewModelPlayer1.getState()
+                : signupViewModelPlayer2.getState();
         signupState.setUsernameError(error);
-        signupViewModel.firePropertyChanged();
-    }
-
-    @Override
-    public void switchToLoginView() {
-        viewManagerModel.setState(loginViewModel.getViewName());
-        viewManagerModel.firePropertyChanged();
-    }
-
-    @Override
-    public void prepareGameStart(String player1, String player2) {
-        System.out.println("Game starting with " + player1 + " and " + player2);
-        viewManagerModel.setState("boardView"); // Transition to the board view
-        viewManagerModel.firePropertyChanged();
+        if (isPlayer1) {
+            signupViewModelPlayer1.firePropertyChanged();
+        } else {
+            signupViewModelPlayer2.firePropertyChanged();
+        }
     }
 }

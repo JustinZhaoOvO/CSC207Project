@@ -1,14 +1,42 @@
 package interface_adapter;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 /**
- * Model for the View Manager. Its state is the name of the View which
- * is currently active. An initial state of "" is used.
+ * ViewManagerModel for managing and changing view states.
  */
-public class ViewManagerModel extends ViewModel<String> {
+public class ViewManagerModel {
+
+    private final PropertyChangeSupport support;
+    private String currentState;
 
     public ViewManagerModel() {
-        super("view manager");
-        this.setState("");
+        support = new PropertyChangeSupport(this);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
+    }
+
+    public synchronized void setState(String newState) {
+        if (newState == null || newState.equals(currentState)) {
+            return; // Avoid setting to null or firing an unnecessary update
+        }
+        String oldState = this.currentState;
+        this.currentState = newState;
+        support.firePropertyChange("state", oldState, newState);
+    }
+
+    public synchronized void firePropertyChanged() {
+        support.firePropertyChange("state", null, currentState);
+    }
+
+    public String getState() {
+        return currentState;
+    }
 }

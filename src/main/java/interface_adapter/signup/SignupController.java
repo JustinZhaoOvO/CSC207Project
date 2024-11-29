@@ -16,30 +16,14 @@ public class SignupController {
 
     /**
      * Executes the Signup Use Case.
-     * @param username the username to sign up
-     * @param password1 the password
-     * @param password2 the password repeated
+     *
+     * @param username       the username to sign up
+     * @param password1      the password
+     * @param password2      the password repeated
+     * @param isPlayer1      whether the current player is Player 1
      */
-    public void execute(String username, String password1, String password2) {
-        final SignupInputData signupInputData = new SignupInputData(
-                username, password1, password2);
-
+    public void execute(String username, String password1, String password2, boolean isPlayer1) {
+        final SignupInputData signupInputData = new SignupInputData(username, password1, password2, isPlayer1);
         userSignupUseCaseInteractor.execute(signupInputData);
-    }
-
-    /**
-     * Executes the "switch to LoginView" Use Case.
-     */
-    public void switchToLoginView() {
-        userSignupUseCaseInteractor.switchToLoginView();
-    }
-
-    /**
-     * Starts the game with two players.
-     * @param player1 the username of Player 1
-     * @param player2 the username of Player 2
-     */
-    public void startGameWithPlayers(String player1, String player2) {
-        userSignupUseCaseInteractor.startGameWithPlayers(player1, player2);
     }
 }
