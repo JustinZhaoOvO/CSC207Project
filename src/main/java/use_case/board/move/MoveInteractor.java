@@ -31,11 +31,10 @@ public class MoveInteractor implements MoveInputBoundary{
             moveOutputData.setRepaint(true);
             moveOutputData.setSelect(true);
 
-        }else if (!(move = findValidMoves(validMoves, coordinate)).isEmpty()){ // a valid move
-            if (board.isPromotionMove(move)){   //promotion
+        }else if (!(move = findValidMoves(validMoves, coordinate)).isEmpty()){ // if a valid move
+            if (board.isPromotionMove(move)){   //if a promotion
                 moveOutputData.setPromotion(true);
             }else{  //move
-                System.out.println(move);
                 board.move(move);
                 moveOutputData.setRepaint(true);
                 moveOutputData.setMoved(true);
