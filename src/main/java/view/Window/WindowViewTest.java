@@ -1,6 +1,8 @@
 package view.Window;
 
+import app.ViewStates;
 import entity.ChariotBoard;
+import interface_adapter.window.WindowViewModel;
 
 import javax.swing.*;
 
@@ -16,7 +18,7 @@ public class WindowViewTest extends JFrame {
         this.setLocation(250,150);
 
 
-        windowBuilder builder = new windowBuilder();
+        WindowBuilder builder = new WindowBuilder(new WindowViewModel(ViewStates.BOARD_VIEW));
         builder.addBoard();
         builder.addTimer(); // Add timer to the window
         WindowView build = builder.build();
