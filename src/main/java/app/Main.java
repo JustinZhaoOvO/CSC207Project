@@ -26,7 +26,7 @@ public class Main {
                 .build();
 
         // Set up and display the application window
-        application.setSize(814, 637);
+        application.setSize(1014, 637);
         application.setResizable(false);
         application.setVisible(true);
     }
