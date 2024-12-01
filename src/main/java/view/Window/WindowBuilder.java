@@ -18,22 +18,22 @@ import view.BoardView.BoardView;
 import view.BoardView.ColorConstants;
 import view.timer.TimerView;
 
-public class windowBuilder {
+public class WindowBuilder {
 
     private final WindowView windowView;
     private final WindowLayout windowLayout;
     private final WindowViewModel windowViewModel;
     private TimerManager timerManager; // Add timerManager field
 
-    public windowBuilder() {
+    public WindowBuilder(WindowViewModel windowViewModel) {
         this.windowView = new WindowView();
-        this.windowViewModel = new WindowViewModel(windowView.getViewName());
+        this.windowViewModel = windowViewModel;
         this.windowView.setBackground(ColorConstants.LIGHTBLUE);
         this.windowLayout = new WindowLayout();
         this.windowView.setLayout(windowLayout);
     }
 
-    public windowBuilder addBoard(){
+    public WindowBuilder addBoard(){
         // Initialize board and layout
         BoardView boardView = new BoardView(windowViewModel);
         boardView.setLayout(new BoardLayout());
@@ -69,7 +69,7 @@ public class windowBuilder {
         return this;
     }
 
-    public windowBuilder addTimer(){
+    public WindowBuilder addTimer(){
         // Initialize timer components
         long totalTimePerPlayer = 5 * 60 * 1000; // 5 minutes per player
         TimerView timerView = new TimerView(totalTimePerPlayer);

@@ -2,6 +2,7 @@ package view.Window;
 //CreateTime: 2024-11-16 12:11 p.m.
 
 
+import app.ViewStates;
 import entity.ChariotBoard;
 import view.BoardView.BoardView;
 import view.timer.TimerView;
@@ -11,7 +12,7 @@ import java.awt.*;
 
 public class WindowView extends JPanel{
 
-    private final String viewName = "Mainwindow";
+    private final String viewName = ViewStates.BOARD_VIEW;
 
     private BoardView boardView;
     private TimerView timerView;
@@ -35,7 +36,6 @@ public class WindowView extends JPanel{
     public String getViewName() {
         return viewName;
     }
-
 
 
     @Override
