@@ -19,16 +19,11 @@ public class WindowLayout extends LayoutAdapter {
     @Override
     public void layoutContainer(Container parent) {
 
-        int width = parent.getWidth();
-        int height = parent.getHeight();
         //board view layout
         int len = Math.min(parent.getWidth()* 3 / 5, parent.getHeight());
         int timerWidth = Math.min(parent.getWidth() / 5, parent.getHeight());
-        super.layoutContainer(parent);
         boardView.setBounds(0, 0, len, len);
-        timerView.setBounds(800,0,timerWidth,600);
-
-        super.layoutContainer(parent);
+        timerView.setBounds(len,0,timerWidth,len);
     }
 
     public void setTimerView(TimerView timerView) {
