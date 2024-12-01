@@ -15,6 +15,7 @@ import interface_adapter.logout.LogoutPresenter;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import interface_adapter.window.WindowViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
@@ -27,10 +28,12 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import view.BoardView.BoardView;
 import view.LoggedInView;
 import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
+import entity.ChariotBoard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -147,6 +150,14 @@ public class AppBuilder {
         final ChangePasswordController changePasswordController =
                 new ChangePasswordController(changePasswordInteractor);
         loggedInView.setChangePasswordController(changePasswordController);
+        return this;
+    }
+
+    // Add Board View in the AppBuilder class
+    public AppBuilder addBoardView() {
+        WindowViewModel windowViewModel = new WindowViewModel(ViewStates.BOARD_VIEW);
+        BoardView boardView = new BoardView(windowViewModel);
+        cardPanel.add(boardView, ViewStates.BOARD_VIEW);
         return this;
     }
 
