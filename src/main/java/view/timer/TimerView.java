@@ -11,9 +11,9 @@ import java.beans.PropertyChangeListener;
 import java.awt.event.ActionListener;
 
 public class TimerView extends JPanel implements PropertyChangeListener {
-    long player1Time; // Player 1 剩余时间
-    long player2Time; // Player 2 剩余时间
-    boolean isPlayer1Turn; // 是否为 Player 1 的回合
+    long player1Time; // 白方剩余时间
+    long player2Time; // 黑方剩余时间
+    boolean isPlayer1Turn; // 是否为白方的回合
     int timeUpPlayer; // 时间到的玩家编号（1 或 2）
     JButton pauseButton;
     JButton startButton;
@@ -27,7 +27,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         this.setPreferredSize(new Dimension(200, 600));
         this.player1Time = totalTimePerPlayer;
         this.player2Time = totalTimePerPlayer;
-        this.isPlayer1Turn = true;
+        this.isPlayer1Turn = true; // 初始为白方回合
         this.timeUpPlayer = 0;
         this.isPaused = false;
         this.totalTime = totalTimePerPlayer;
@@ -60,11 +60,6 @@ public class TimerView extends JPanel implements PropertyChangeListener {
 
         // 初始时，开始按钮不可见
         startButton.setVisible(false);
-
-        // 调试：验证图像是否加载
-        System.out.println("Pause Button Image: " + (ImageConstants.PAUSEBUTTON != null));
-        System.out.println("Start Button Image: " + (ImageConstants.STARTBUTTON != null));
-        System.out.println("Restart Button Image: " + (ImageConstants.RESTARTBUTTON != null));
     }
 
     private void styleButton(JButton button) {
@@ -107,13 +102,13 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         startButton.setEnabled(true);
     }
 
-    // 新增方法：禁用暂停和开始按钮
+    // 禁用暂停和开始按钮
     public void disablePauseAndStartButtons() {
         pauseButton.setEnabled(false);
         startButton.setEnabled(false);
     }
 
-    // 新增方法：启用暂停和开始按钮
+    // 启用暂停和开始按钮
     public void enablePauseAndStartButtons() {
         pauseButton.setEnabled(true);
         startButton.setEnabled(true);
@@ -183,67 +178,67 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         float ratio2 = (float) player2Time / totalTime;
         ratio2 = Math.max(0, Math.min(1, ratio2)); // 限制在0到1之间
 
-        // 绘制 Player 1 的块（上半部分）
-        int player1RemainingHeight = (int) (blockHeight * ratio1);
-        int player1Y = 0;
-
-        // 绘制背景为白色
-        g2.setColor(Color.WHITE);
-        g2.fillRect(0, player1Y, width, blockHeight);
-
-        // 绘制 Player 1 剩余时间的部分
-        g2.setColor(Color.CYAN); // 使用 CYAN 颜色
-        g2.fillRect(0, player1Y + (blockHeight - player1RemainingHeight), width, player1RemainingHeight);
-
-        // 如果是 Player 1 的回合，绘制黄色边框
-        if (isPlayer1Turn) {
-            g2.setColor(Color.YELLOW);
-            g2.setStroke(new BasicStroke(5));
-            g2.drawRect(0, player1Y, width - 1, blockHeight - 1);
-        }
-
-        // 绘制 Player 1 的信息
-        g2.setColor(Color.BLACK);
-        g2.setFont(new Font("Arial", Font.BOLD, 16));
-        String player1Text = "White";
-        FontMetrics fm = g2.getFontMetrics();
-        int textWidth = fm.stringWidth(player1Text);
-        g2.drawString(player1Text, (width - textWidth) / 2, player1Y + 20);
-
-        // 显示 Player 1 剩余时间
-        String timeText1 = formatTime(player1Time);
-        textWidth = fm.stringWidth(timeText1);
-        g2.drawString(timeText1, (width - textWidth) / 2, player1Y + blockHeight - 10);
-
-        // 绘制 Player 2 的块（下半部分）
+        // 绘制黑方的块（上半部分）
         int player2RemainingHeight = (int) (blockHeight * ratio2);
-        int player2Y = blockHeight;
+        int player2Y = 0;
 
         // 绘制背景为白色
         g2.setColor(Color.WHITE);
         g2.fillRect(0, player2Y, width, blockHeight);
 
-        // 绘制 Player 2 剩余时间的部分
-        g2.setColor(Color.RED); // 使用 RED 颜色
+        // 绘制黑方剩余时间的部分
+        g2.setColor(Color.RED); // 使用红色表示黑方
         g2.fillRect(0, player2Y + (blockHeight - player2RemainingHeight), width, player2RemainingHeight);
 
-        // 如果是 Player 2 的回合，绘制黄色边框
+        // 如果是黑方的回合，绘制黄色边框
         if (!isPlayer1Turn) {
             g2.setColor(Color.YELLOW);
             g2.setStroke(new BasicStroke(5));
             g2.drawRect(0, player2Y, width - 1, blockHeight - 1);
         }
 
-        // 绘制 Player 2 的信息
+        // 绘制黑方的信息
         g2.setColor(Color.BLACK);
+        g2.setFont(new Font("Arial", Font.BOLD, 16));
         String player2Text = "Black";
-        textWidth = fm.stringWidth(player2Text);
+        FontMetrics fm = g2.getFontMetrics();
+        int textWidth = fm.stringWidth(player2Text);
         g2.drawString(player2Text, (width - textWidth) / 2, player2Y + 20);
 
-        // 显示 Player 2 剩余时间
+        // 显示黑方剩余时间
         String timeText2 = formatTime(player2Time);
         textWidth = fm.stringWidth(timeText2);
         g2.drawString(timeText2, (width - textWidth) / 2, player2Y + blockHeight - 10);
+
+        // 绘制白方的块（下半部分）
+        int player1RemainingHeight = (int) (blockHeight * ratio1);
+        int player1Y = blockHeight;
+
+        // 绘制背景为白色
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, player1Y, width, blockHeight);
+
+        // 绘制白方剩余时间的部分
+        g2.setColor(Color.CYAN); // 使用青色表示白方
+        g2.fillRect(0, player1Y + (blockHeight - player1RemainingHeight), width, player1RemainingHeight);
+
+        // 如果是白方的回合，绘制黄色边框
+        if (isPlayer1Turn) {
+            g2.setColor(Color.YELLOW);
+            g2.setStroke(new BasicStroke(5));
+            g2.drawRect(0, player1Y, width - 1, blockHeight - 1);
+        }
+
+        // 绘制白方的信息
+        g2.setColor(Color.BLACK);
+        String player1Text = "White";
+        textWidth = fm.stringWidth(player1Text);
+        g2.drawString(player1Text, (width - textWidth) / 2, player1Y + 20);
+
+        // 显示白方剩余时间
+        String timeText1 = formatTime(player1Time);
+        textWidth = fm.stringWidth(timeText1);
+        g2.drawString(timeText1, (width - textWidth) / 2, player1Y + blockHeight - 10);
 
         // 如果有玩家时间到或游戏结束，显示提示信息
         if (gameOver) {
