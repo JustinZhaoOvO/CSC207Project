@@ -34,6 +34,8 @@ import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
 import entity.ChariotBoard;
+import view.Window.WindowBuilder;
+import view.Window.WindowView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -156,8 +158,10 @@ public class AppBuilder {
     // Add Board View in the AppBuilder class
     public AppBuilder addBoardView() {
         WindowViewModel windowViewModel = new WindowViewModel(ViewStates.BOARD_VIEW);
-        BoardView boardView = new BoardView(windowViewModel);
-        cardPanel.add(boardView, ViewStates.BOARD_VIEW);
+        WindowBuilder windowBuilder = new WindowBuilder(windowViewModel);
+        WindowView windowView = windowBuilder.addBoard().addTimer().build();
+        windowView.startTheGameWith(new ChariotBoard());
+        cardPanel.add(windowView, ViewStates.BOARD_VIEW);
         return this;
     }
 
@@ -173,8 +177,9 @@ public class AppBuilder {
         viewManagerModel.setState(ViewStates.SIGNUP_PLAYER1);
         viewManagerModel.firePropertyChanged();
 
-        application.pack();
-        application.setLocationRelativeTo(null); // Center the window
+//        application.pack();
+//        application.setLocationRelativeTo(null); // Center the window
+        application.setLocation(250, 100);
         application.setVisible(true);
 
         return application;
