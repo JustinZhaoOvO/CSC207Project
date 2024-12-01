@@ -250,6 +250,9 @@ public class BoardView extends JPanel implements PropertyChangeListener {
     }
 
     public void freezeBoard(){
+        this.selected = null;
+        this.validMoves = null;
+        repaintBoardController.execute(this.chariotBoard);
         this.Paused = true;
     }
 
