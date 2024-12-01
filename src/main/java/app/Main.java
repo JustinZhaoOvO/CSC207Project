@@ -17,7 +17,9 @@ public class Main {
         final JFrame application = appBuilder
                 .addSignupView() // Adds both Player 1 and Player 2 Signup Views
                 .addLoginView()  // Adds both Player 1 and Player 2 Login Views
-                .addLoggedInView() // Adds the logged-in view
+                .addLoggedInView()
+                .addBoardView()
+                // Adds the logged-in view
                 .addSignupUseCase() // Configures the Signup Use Case
                 .addLoginUseCase()  // Configures the Login Use Case
                 .addChangePasswordUseCase() // Configures the Change Password Use Case

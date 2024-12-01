@@ -29,8 +29,8 @@ public class LoginPresenter implements LoginOutputBoundary {
             // Player 1 successfully logged in, now transition to Signup for Player 2
             viewManagerModel.setState(ViewStates.SIGNUP_PLAYER2);
         } else {
-            // Player 2 successfully logged in, proceed to the logged-in view
-            viewManagerModel.setState(ViewStates.LOGGED_IN_VIEW);
+            // Player 2 successfully logged in, proceed to the board view
+            viewManagerModel.setState(ViewStates.BOARD_VIEW);
         }
         viewManagerModel.firePropertyChanged(); // Notify view manager to update the view
     }
