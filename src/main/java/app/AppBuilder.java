@@ -177,8 +177,9 @@ public class AppBuilder {
         viewManagerModel.setState(ViewStates.SIGNUP_PLAYER1);
         viewManagerModel.firePropertyChanged();
 
-        application.pack();
-        application.setLocationRelativeTo(null); // Center the window
+//        application.pack();
+//        application.setLocationRelativeTo(null); // Center the window
+        application.setLocation(250, 100);
         application.setVisible(true);
 
         return application;
