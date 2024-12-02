@@ -20,6 +20,10 @@ public class RepaintBoardInteractor implements RepaintBoardInputBoundary {
 
     }
 
+    /**
+     * convert a chariot board to piecesview components, and update the Board view correspondingly.
+     * @param data : a chariot board
+     */
     @Override
     public void execute(RepaintBoardInputData data) {
 
@@ -30,6 +34,11 @@ public class RepaintBoardInteractor implements RepaintBoardInputBoundary {
 
     }
 
+    /**
+     * convert a string format board to a 2D board array
+     * @param board : a string format board
+     * @return : 2D piecesview array, represents the board
+     */
     public static PiecesView[][] parsingABoard(String board){
         PiecesView[][] ans = new PiecesView[BoardConstants.SIZEOFABOARD][BoardConstants.SIZEOFABOARD];
         String[] rows = board.split("\n");

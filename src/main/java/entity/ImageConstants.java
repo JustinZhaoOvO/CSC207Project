@@ -5,6 +5,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
+/**
+ * Image constants
+ */
 public class ImageConstants {
     public static final Image BLACKBISHOP =
             new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/BishopBlack.png"))).getImage();
