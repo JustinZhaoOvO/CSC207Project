@@ -2,7 +2,6 @@ package view.timer;
 
 import entity.ImageConstants;
 import interface_adapter.window.WindowState;
-import interface_adapter.window.WindowViewModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,55 +10,65 @@ import java.beans.PropertyChangeListener;
 import java.awt.event.ActionListener;
 
 public class TimerView extends JPanel implements PropertyChangeListener {
-    long player1Time; // 白方剩余时间
-    long player2Time; // 黑方剩余时间
-    boolean isPlayer1Turn; // 是否为白方的回合
-    int timeUpPlayer; // 时间到的玩家编号（1 或 2）
+    long player1Time; // Remaining time for player 1
+    long player2Time; // Remaining time for player 2
+    boolean isPlayer1Turn; // Is it player 1's turn
+    int timeUpPlayer; // Player whose time is up (1 or 2)
     JButton pauseButton;
     JButton startButton;
     JButton restartButton;
+    JButton continueButton; // Added continueButton
     boolean isPaused;
-    final long totalTime; // 每个玩家的总时间（毫秒）
+    final long totalTime; // Total time per player (milliseconds)
     boolean gameOver;
 
-    // 构造函数，接受每个玩家的总时间作为参数
+    // Constructor, accepts total time per player as parameter
     public TimerView(long totalTimePerPlayer) {
         this.setPreferredSize(new Dimension(200, 600));
         this.player1Time = totalTimePerPlayer;
         this.player2Time = totalTimePerPlayer;
-        this.isPlayer1Turn = true; // 初始为白方回合
+        this.isPlayer1Turn = true; // Start with player 1's turn
         this.timeUpPlayer = 0;
         this.isPaused = false;
         this.totalTime = totalTimePerPlayer;
         this.gameOver = false;
 
-        setLayout(null); // 使用绝对定位
+        setLayout(null); // Use absolute positioning
 
-        // 加载并缩放图像
+        // Load and scale images
         Image pauseImage = ImageConstants.PAUSEBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         Image startImage = ImageConstants.STARTBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         Image restartImage = ImageConstants.RESTARTBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        Image continueImage = ImageConstants.CONTINUEBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
-        // 初始化暂停按钮
+        // Initialize pause button
         pauseButton = new JButton(new ImageIcon(pauseImage));
         pauseButton.setBounds(10, 550, 50, 50);
         styleButton(pauseButton);
         add(pauseButton);
 
-        // 初始化开始按钮
+        // Initialize start button
         startButton = new JButton(new ImageIcon(startImage));
         startButton.setBounds(70, 550, 50, 50);
         styleButton(startButton);
         add(startButton);
 
-        // 初始化重启按钮
+        // Initialize restart button
         restartButton = new JButton(new ImageIcon(restartImage));
         restartButton.setBounds(130, 550, 50, 50);
         styleButton(restartButton);
         add(restartButton);
 
-        // 初始时，开始按钮不可见
+        // Initialize continue button
+        continueButton = new JButton(new ImageIcon(continueImage));
+        continueButton.setBounds(70, 550, 50, 50);
+        styleButton(continueButton);
+        add(continueButton);
+
+        // Initially, continue button is visible; other buttons adjusted accordingly
+        continueButton.setVisible(true);
         startButton.setVisible(false);
+        pauseButton.setVisible(false);
     }
 
     private void styleButton(JButton button) {
@@ -69,12 +78,12 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         button.setOpaque(false);
         button.setFocusable(false);
         button.setRolloverEnabled(false);
-        // 确保按下和选中图标与默认图标相同
+        // Ensure pressed and selected icons are the same as default icon
         button.setPressedIcon(button.getIcon());
         button.setSelectedIcon(button.getIcon());
     }
 
-    // 添加监听器的方法
+    // Methods to add action listeners
     public void addPauseActionListener(ActionListener listener) {
         pauseButton.addActionListener(listener);
     }
@@ -87,31 +96,50 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         restartButton.addActionListener(listener);
     }
 
-    // 显示/隐藏按钮的方法
+    public void addContinueActionListener(ActionListener listener) {
+        continueButton.addActionListener(listener);
+    }
+
+    // Methods to show/hide buttons
     public void showPauseButton() {
         pauseButton.setVisible(true);
         startButton.setVisible(false);
+        continueButton.setVisible(false);
         pauseButton.setEnabled(true);
         startButton.setEnabled(false);
+        continueButton.setEnabled(false);
     }
 
     public void showStartButton() {
         pauseButton.setVisible(false);
         startButton.setVisible(true);
+        continueButton.setVisible(false);
         pauseButton.setEnabled(false);
         startButton.setEnabled(true);
+        continueButton.setEnabled(false);
     }
 
-    // 禁用暂停和开始按钮
+    public void showContinueButton() {
+        pauseButton.setVisible(false);
+        startButton.setVisible(false);
+        continueButton.setVisible(true);
+        pauseButton.setEnabled(false);
+        startButton.setEnabled(false);
+        continueButton.setEnabled(true);
+    }
+
+    // Disable pause, start, and continue buttons
     public void disablePauseAndStartButtons() {
         pauseButton.setEnabled(false);
         startButton.setEnabled(false);
+        continueButton.setEnabled(false);
     }
 
-    // 启用暂停和开始按钮
+    // Enable pause, start, and continue buttons
     public void enablePauseAndStartButtons() {
         pauseButton.setEnabled(true);
         startButton.setEnabled(true);
+        continueButton.setEnabled(true);
     }
 
     @Override
@@ -138,12 +166,20 @@ public class TimerView extends JPanel implements PropertyChangeListener {
             case "restart" -> {
                 boolean isRestart = ((WindowState) evt.getNewValue()).isRestart();
                 if (isRestart) {
-                    // 重置计时器视图的状态
+                    // Reset the state of the timer view
                     resetView();
+                    // Show Continue button after restart
+                    showContinueButton();
                 }
             }
         }
-        repaint(); // 当属性变化时重绘面板
+
+        // Show Continue button if timer is at maximum time and game is not over
+        if (player1Time == totalTime && player2Time == totalTime && !gameOver) {
+            showContinueButton();
+        }
+
+        repaint(); // Repaint panel when properties change
     }
 
     private void resetView() {
@@ -153,7 +189,8 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         this.timeUpPlayer = 0;
         this.isPaused = false;
         this.gameOver = false;
-        showPauseButton();
+        // Show Continue button after reset
+        showContinueButton();
         enablePauseAndStartButtons();
     }
 
@@ -161,86 +198,86 @@ public class TimerView extends JPanel implements PropertyChangeListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // 将 Graphics 转换为 Graphics2D
+        // Convert Graphics to Graphics2D
         Graphics2D g2 = (Graphics2D) g;
 
-        // 获取面板尺寸
+        // Get panel dimensions
         int width = getWidth();
         int height = getHeight();
 
-        // 将面板垂直分为上下两块
+        // Split panel vertically into two sections
         int blockHeight = height / 2;
 
-        // 计算时间比例
+        // Calculate time ratios
         float ratio1 = (float) player1Time / totalTime;
-        ratio1 = Math.max(0, Math.min(1, ratio1)); // 限制在0到1之间
+        ratio1 = Math.max(0, Math.min(1, ratio1)); // Clamp between 0 and 1
 
         float ratio2 = (float) player2Time / totalTime;
-        ratio2 = Math.max(0, Math.min(1, ratio2)); // 限制在0到1之间
+        ratio2 = Math.max(0, Math.min(1, ratio2)); // Clamp between 0 and 1
 
-        // 绘制黑方的块（上半部分）
+        // Draw black player's block (upper half)
         int player2RemainingHeight = (int) (blockHeight * ratio2);
         int player2Y = 0;
 
-        // 绘制背景为白色
-        g2.setColor(Color.WHITE);
+        // Draw background
+        g2.setColor(Color.GRAY);
         g2.fillRect(0, player2Y, width, blockHeight);
 
-        // 绘制黑方剩余时间的部分
-        g2.setColor(Color.RED); // 使用红色表示黑方
+        // Draw black player's remaining time
+        g2.setColor(Color.BLACK);
         g2.fillRect(0, player2Y + (blockHeight - player2RemainingHeight), width, player2RemainingHeight);
 
-        // 如果是黑方的回合，绘制黄色边框
+        // Draw yellow border if it's black player's turn
         if (!isPlayer1Turn) {
             g2.setColor(Color.YELLOW);
             g2.setStroke(new BasicStroke(5));
             g2.drawRect(0, player2Y, width - 1, blockHeight - 1);
         }
 
-        // 绘制黑方的信息
-        g2.setColor(Color.BLACK);
+        // Draw black player's info
+        g2.setColor(Color.RED);
         g2.setFont(new Font("Arial", Font.BOLD, 16));
         String player2Text = "Black";
         FontMetrics fm = g2.getFontMetrics();
         int textWidth = fm.stringWidth(player2Text);
         g2.drawString(player2Text, (width - textWidth) / 2, player2Y + 20);
 
-        // 显示黑方剩余时间
+        // Display black player's remaining time
         String timeText2 = formatTime(player2Time);
         textWidth = fm.stringWidth(timeText2);
         g2.drawString(timeText2, (width - textWidth) / 2, player2Y + blockHeight - 10);
 
-        // 绘制白方的块（下半部分）
+        // Draw white player's block (lower half)
         int player1RemainingHeight = (int) (blockHeight * ratio1);
         int player1Y = blockHeight;
 
-        // 绘制背景为白色
-        g2.setColor(Color.WHITE);
+        // Draw background
+        g2.setColor(Color.GRAY);
         g2.fillRect(0, player1Y, width, blockHeight);
 
-        // 绘制白方剩余时间的部分
-        g2.setColor(Color.CYAN); // 使用青色表示白方
+        // Draw white player's remaining time
+        g2.setColor(Color.WHITE);
         g2.fillRect(0, player1Y + (blockHeight - player1RemainingHeight), width, player1RemainingHeight);
 
-        // 如果是白方的回合，绘制黄色边框
+        // Draw yellow border if it's white player's turn
         if (isPlayer1Turn) {
             g2.setColor(Color.YELLOW);
             g2.setStroke(new BasicStroke(5));
             g2.drawRect(0, player1Y, width - 1, blockHeight - 1);
         }
 
-        // 绘制白方的信息
-        g2.setColor(Color.BLACK);
+        // Draw white player's info
+        g2.setColor(Color.BLUE);
         String player1Text = "White";
         textWidth = fm.stringWidth(player1Text);
         g2.drawString(player1Text, (width - textWidth) / 2, player1Y + 20);
 
-        // 显示白方剩余时间
+        // Display white player's remaining time
         String timeText1 = formatTime(player1Time);
         textWidth = fm.stringWidth(timeText1);
         g2.drawString(timeText1, (width - textWidth) / 2, player1Y + blockHeight - 10);
 
-        // 如果有玩家时间到或游戏结束，显示提示信息
+        // If a player's time is up or game is over, display message
         if (gameOver) {
             String message = timeUpPlayer != 0
                     ? "Player " + (timeUpPlayer == 1 ? "White" : "Black") + " time is up!"
@@ -252,7 +289,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         }
     }
 
-    // 将毫秒转换为 mm:ss 格式
+    // Convert milliseconds to mm:ss format
     private String formatTime(long timeMillis) {
         long totalSeconds = timeMillis / 1000;
         long minutes = totalSeconds / 60;
@@ -260,7 +297,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         return minutes + ":" + String.format("%02d", seconds);
     }
 
-    // 更新暂停状态
+    // Update pause state
     public void setPaused(boolean paused) {
         this.isPaused = paused;
         if (paused) {

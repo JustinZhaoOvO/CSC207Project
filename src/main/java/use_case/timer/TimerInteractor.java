@@ -13,19 +13,20 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     private boolean isPlayer1Turn;
     private Thread timerThread;
 
-    // 构造函数
+    // Constructor
     public TimerInteractor(long totalTimePerPlayer, TimerOutputBoundary outputBoundary) {
         this.player1Timer = new Timer(totalTimePerPlayer);
         this.player2Timer = new Timer(totalTimePerPlayer);
         this.outputBoundary = outputBoundary;
         this.running = false;
         this.paused = false;
-        this.isPlayer1Turn = true; // 初始为白方回合
+        this.isPlayer1Turn = true; // Start with player 1's turn
     }
 
     @Override
-    public void startTimer() {
+    public synchronized void startTimer() {
         if (!running) {
+            paused = false; // Reset paused flag when starting the timer
             running = true;
             timerThread = new Thread(this);
             timerThread.start();
@@ -33,10 +34,18 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     }
 
     @Override
-    public void stopTimer() {
-        running = false;
-        if (timerThread != null) {
-            timerThread.interrupt();
+    public synchronized void stopTimer() {
+        if (running) {
+            running = false;
+            if (timerThread != null) {
+                timerThread.interrupt();
+                try {
+                    timerThread.join(); // Wait for the thread to finish
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                timerThread = null;
+            }
         }
     }
 
@@ -55,7 +64,7 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     public void resumeTimer() {
         paused = false;
         synchronized (this) {
-            this.notify(); // 唤醒等待的线程
+            this.notify(); // Wake up waiting thread
         }
     }
 
@@ -78,49 +87,56 @@ public class TimerInteractor implements TimerInputBoundary, Runnable {
     @Override
     public void run() {
         long previousTime = System.currentTimeMillis();
-        while (running) {
-            if (paused) {
-                synchronized (this) {
-                    try {
-                        this.wait(); // 等待直到被唤醒
-                    } catch (InterruptedException e) {
-                        if (!running) {
-                            // 如果不再运行，退出循环
-                            break;
+        try {
+            while (running) {
+                if (paused) {
+                    synchronized (this) {
+                        try {
+                            this.wait(); // Wait until notified
+                        } catch (InterruptedException e) {
+                            if (!running) {
+                                // Exit loop if not running
+                                break;
+                            }
+                            // Handle interruption during pause
+                            Thread.currentThread().interrupt();
                         }
-                        e.printStackTrace();
                     }
+                    previousTime = System.currentTimeMillis(); // Reset time after pause
+                    continue;
                 }
-                previousTime = System.currentTimeMillis(); // 暂停后重置时间
-                continue;
-            }
-            long currentTime = System.currentTimeMillis();
-            long deltaTime = currentTime - previousTime;
-            previousTime = currentTime;
+                long currentTime = System.currentTimeMillis();
+                long deltaTime = currentTime - previousTime;
+                previousTime = currentTime;
 
-            if (isPlayer1Turn) {
-                player1Timer.decrement(deltaTime);
-            } else {
-                player2Timer.decrement(deltaTime);
-            }
-
-            updateTime();
-
-            if (player1Timer.isTimeUp() || player2Timer.isTimeUp()) {
-                running = false;
-                // 通知哪个玩家的时间到了
-                outputBoundary.timeUp(isPlayer1Turn ? 1 : 2);
-            }
-
-            try {
-                Thread.sleep(100); // 每100毫秒更新一次
-            } catch (InterruptedException e) {
-                if (!running) {
-                    // 如果不再运行，退出循环
-                    break;
+                if (isPlayer1Turn) {
+                    player1Timer.decrement(deltaTime);
+                } else {
+                    player2Timer.decrement(deltaTime);
                 }
-                e.printStackTrace();
+
+                updateTime();
+
+                if (player1Timer.isTimeUp() || player2Timer.isTimeUp()) {
+                    running = false;
+                    // Notify which player's time is up
+                    outputBoundary.timeUp(isPlayer1Turn ? 1 : 2);
+                    break; // Exit the loop
+                }
+
+                try {
+                    Thread.sleep(100); // Update every 100 milliseconds
+                } catch (InterruptedException e) {
+                    if (!running) {
+                        // Exit loop if not running
+                        break;
+                    }
+                    // Handle interruption during sleep
+                    Thread.currentThread().interrupt();
+                }
             }
+        } finally {
+            running = false; // Ensure running is set to false when thread ends
         }
     }
 }

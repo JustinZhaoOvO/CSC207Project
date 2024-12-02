@@ -1,5 +1,4 @@
 package view.Window;
-//CreateTime: 2024-11-27 3:34 p.m.
 
 import interface_adapter.board.BoardViewModel;
 import interface_adapter.board.move.MoveController;
@@ -23,7 +22,7 @@ public class WindowBuilder {
     private final WindowView windowView;
     private final WindowLayout windowLayout;
     private final WindowViewModel windowViewModel;
-    private TimerManager timerManager; // Add timerManager field
+    private TimerManager timerManager;
 
     public WindowBuilder(WindowViewModel windowViewModel) {
         this.windowView = new WindowView();
@@ -33,7 +32,7 @@ public class WindowBuilder {
         this.windowView.setLayout(windowLayout);
     }
 
-    public WindowBuilder addBoard(){
+    public WindowBuilder addBoard() {
         // Initialize board and layout
         BoardView boardView = new BoardView(windowViewModel);
         boardView.setLayout(new BoardLayout());
@@ -69,7 +68,7 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder addTimer(){
+    public WindowBuilder addTimer() {
         // Initialize timer components
         long totalTimePerPlayer = 5 * 60 * 1000; // 5 minutes per player
         TimerView timerView = new TimerView(totalTimePerPlayer);
