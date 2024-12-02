@@ -33,7 +33,6 @@ public class TimerManager {
         timerView.showContinueButton();
     }
 
-
     private TimerController initializeTimer() {
         TimerViewModel timerViewModel = new TimerViewModel();
         TimerPresenter timerPresenter = new TimerPresenter(timerViewModel);
@@ -54,7 +53,9 @@ public class TimerManager {
             }
         });
 
-        timerController.startGame();
+        // Do not start the game automatically here
+        // timerController.startGame(); // Remove or comment out this line
+
         return timerController;
     }
 
@@ -69,7 +70,7 @@ public class TimerManager {
             windowViewModel.setPaused(true);
         });
 
-        // Start button
+        // Start button (used to resume from pause)
         timerView.addStartActionListener(e -> {
             System.out.println("Start button clicked");
             timerController.resumeGame();
@@ -130,8 +131,7 @@ public class TimerManager {
         timerController.resetTimers();
         isPaused = false;
         timerView.setPaused(isPaused);
-        timerController.startGame();
-        timerController.resumeGame();
+        // Do not start the timer here; it will start when the Continue button is clicked
         windowViewModel.setRestart(false); // Reset restart flag
     }
 
