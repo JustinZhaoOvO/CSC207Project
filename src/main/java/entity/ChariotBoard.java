@@ -6,6 +6,11 @@ import chariot.util.Board;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Using Facade Design Pattern
+ * Encapsulate the Chariot API, only expose the methods we need to use,
+ * and also add some new method we need
+ */
 public class ChariotBoard {
     private Board board;
 
@@ -13,13 +18,19 @@ public class ChariotBoard {
         this.board = Board.fromStandardPosition();
     }
 
-    public List<String> getValidMoves(){
+
+    private List<String> getValidMoves(){
         return this.board.validMoves().stream()
                 .map(Board.Move::uci)
                 .sorted()
                 .toList();
     }
 
+    /**
+     * get all valid moves of a given position
+     * @param position : a position on the board, for example a1, f3
+     * @return : A list containing of valid moves of the position
+     */
     public List<String> getValidMovesOfPosition(String position){
         if (position.length() != 2) return null;
         List<String> ans = new ArrayList<>();
@@ -31,6 +42,11 @@ public class ChariotBoard {
         }return ans;
     }
 
+    /**
+     * get the Piece object at a given coordinate
+     * @param coordinate : a coordinate object
+     * @return : the piece at given coordinate on the board
+     */
     public Board.Piece getPieceAt(Coordinate coordinate){
         return this.board.get(coordinate.toString());
     }
@@ -52,23 +68,37 @@ public class ChariotBoard {
     }
 
 
-
+    /**
+     * Perform a move
+     * @param movesToPlay : the move string, For example : a3a4
+     */
     public void move(String movesToPlay){
         this.board = this.board.play(movesToPlay);
     }
 
+    /**
+     * determine if  the game is ended
+     * @return : game is ended or not
+     */
     public boolean ended() {
         return this.board.ended();
     }
 
+    /**
+     * get the game state
+     * @return: GameState : checkmate, stalemate, fifty_move_rule, threefold_repetition, ongoing
+     */
     public Board.GameState gameState() {
         return this.board.gameState();
     }
 
+    /**
+     * Determine is black turn or not
+     * @return : is black turn or not
+     */
     public boolean isBlackToMove() {
         return this.board.blackToMove();
     }
-
 
     public String toString(){
         return this.board.toString();

@@ -8,6 +8,9 @@ import use_case.board.move.MoveInputData;
 
 import java.util.List;
 
+/**
+ * Perform a move
+ */
 public class MoveController {
     private final MoveInputBoundary interactor;
 
@@ -15,6 +18,12 @@ public class MoveController {
         this.interactor = interactor;
     }
 
+    /**
+     * perform a move on given board
+     * @param board : a chariot board
+     * @param coordinate : the coordinate was clicked
+     * @param validMoves : an array contains all current valid moves.
+     */
     public void execute(ChariotBoard board, Coordinate coordinate, List<String> validMoves) {
         this.interactor.execute(new MoveInputData(board, coordinate, validMoves));
     }
