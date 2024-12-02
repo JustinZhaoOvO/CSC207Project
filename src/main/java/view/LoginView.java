@@ -34,7 +34,7 @@ public class LoginView extends JPanel implements PropertyChangeListener {
         this.loginViewModel.addPropertyChangeListener(this);
 
         // Initialize components
-        titleLabel = new JLabel(viewName.equals(ViewStates.LOGIN_PLAYER1) ? "Login - Player 1" : "Login - Player 2");
+        titleLabel = new JLabel(viewName.equals(ViewStates.LOGIN_PLAYER1) ? "Login - Black" : "Login - White");
         final JLabel usernameLabel = new JLabel("Username:");
         final JLabel passwordLabel = new JLabel("Password:");
 
