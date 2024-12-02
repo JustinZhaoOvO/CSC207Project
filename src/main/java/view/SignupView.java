@@ -35,7 +35,7 @@ public class SignupView extends JPanel implements PropertyChangeListener {
         signupViewModel.addPropertyChangeListener(this);
 
         // Initialize components
-        titleLabel = new JLabel(viewName.equals(ViewStates.SIGNUP_PLAYER1) ? "Sign Up - Player 1" : "Sign Up - Player 2");
+        titleLabel = new JLabel(viewName.equals(ViewStates.SIGNUP_PLAYER1) ? "Sign Up - Black" : "Sign Up - White");
         final JLabel usernameLabel = new JLabel("Choose Username:");
         final JLabel passwordLabel = new JLabel("Password:");
         final JLabel repeatPasswordLabel = new JLabel("Re-enter Password:");
