@@ -36,4 +36,6 @@ public class ImageConstants {
             new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/StartButton.png"))).getImage();
     public static final Image RESTARTBUTTON =
             new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/RestartButton.png"))).getImage();
+    public static final Image CONTINUEBUTTON =
+            new ImageIcon(Objects.requireNonNull(ImageConstants.class.getClassLoader().getResource(".images/Continue.png"))).getImage();
 }

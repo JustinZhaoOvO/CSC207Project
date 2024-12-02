@@ -25,7 +25,14 @@ public class TimerManager {
         this.timerController = initializeTimer();
         setupActionListeners();
         setupWindowViewModelListener();
+
+        // Add TimerView as a listener to WindowViewModel
+        windowViewModel.addPropertyChangeListener(timerView);
+
+        // Show the Continue button at the start
+        timerView.showContinueButton();
     }
+
 
     private TimerController initializeTimer() {
         TimerViewModel timerViewModel = new TimerViewModel();
@@ -35,16 +42,14 @@ public class TimerManager {
 
         timerViewModel.addPropertyChangeListener(timerView);
 
-        // 监听 timeUp 事件以更新 WindowState
         timerViewModel.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if ("timeUp".equals(evt.getPropertyName())) {
                     int timeUpPlayer = (int) evt.getNewValue();
                     System.out.println("TimerManager detected timeUp for player " + timeUpPlayer);
-                    // 更新 WindowState
                     windowViewModel.setGameOver(true);
-                    windowViewModel.setBlackRanOutOfTime(timeUpPlayer == 2); // 假设 Player 2 是 Black
+                    windowViewModel.setBlackRanOutOfTime(timeUpPlayer == 2);
                 }
             }
         });
@@ -54,32 +59,43 @@ public class TimerManager {
     }
 
     private void setupActionListeners() {
-        // 暂停按钮
+        // Pause button
         timerView.addPauseActionListener(e -> {
             System.out.println("Pause button clicked");
             timerController.pauseGame();
             isPaused = true;
             timerView.setPaused(isPaused);
-            // 更新 WindowState
+            // Update WindowState
             windowViewModel.setPaused(true);
         });
 
-        // 开始按钮
+        // Start button
         timerView.addStartActionListener(e -> {
             System.out.println("Start button clicked");
             timerController.resumeGame();
             isPaused = false;
             timerView.setPaused(isPaused);
-            // 更新 WindowState
+            // Update WindowState
             windowViewModel.setPaused(false);
         });
 
-        // 重启按钮
+        // Restart button
         timerView.addRestartActionListener(e -> {
             System.out.println("Restart button clicked");
             resetTimerAndGame();
-            // 通知重启
+            // Notify restart
             windowViewModel.setRestart(true);
+        });
+
+        // Continue button
+        timerView.addContinueActionListener(e -> {
+            System.out.println("Continue button clicked");
+            timerController.startGame();
+            isPaused = false;
+            timerView.setPaused(isPaused);
+            timerView.showPauseButton();
+            // Update WindowState
+            windowViewModel.setPaused(false);
         });
     }
 
@@ -92,7 +108,7 @@ public class TimerManager {
                     if (switchTurn) {
                         System.out.println("TimerManager detected switchTurn");
                         timerController.switchTurn();
-                        // 处理完毕后，将 switchTurn 重置为 false
+                        // Reset switchTurn to false
                         windowViewModel.setSwitchTurn(false);
                     }
                 }
@@ -116,16 +132,16 @@ public class TimerManager {
         timerView.setPaused(isPaused);
         timerController.startGame();
         timerController.resumeGame();
-        windowViewModel.setRestart(false); // 重置重启标志
+        windowViewModel.setRestart(false); // Reset restart flag
     }
 
-    // 接口，用于通知重启事件
+    // Interface for notifying restart events
     public interface RestartListener {
         void onRestart();
     }
 
-    // 设置重启监听器
+    // Set restart listener
     public void setRestartListener(RestartListener listener) {
-        // 当前设置中未使用
+        // Not used in current setup
     }
 }
