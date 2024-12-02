@@ -122,7 +122,7 @@ The timer highlights which side's turn it is. Use the mouse to click on a piece 
 
 <img src="https://github.com/JustinZhaoOvO/CSC207Project/blob/zhaoboqu/src/main/resources/READMEresources/mousehover.png?raw=true" alt="image" width="400" height="300"/>
 
-The board highlights the selected piece with a yellow background. All spaces that can be moved are shown as red dots, and all pieces that can be captured are highlighted with a red background.
+The board highlights the selected piece with a yellow background. All spaces that the selected piece can move to are shown with red dots, and all pieces that can be captured are highlighted with a red background.
 
 <img src="https://github.com/JustinZhaoOvO/CSC207Project/blob/zhaoboqu/src/main/resources/READMEresources/selected.png?raw=true" alt="image" width="400" height="300"/>
 
