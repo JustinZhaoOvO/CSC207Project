@@ -1,6 +1,6 @@
 
 
-## Accessible Report of Chess Game Program
+## Accessibility Report of Chess Game Program
 
 **Principle 1: Equitable Use**
 
