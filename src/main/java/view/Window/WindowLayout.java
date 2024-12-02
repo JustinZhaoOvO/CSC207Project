@@ -20,8 +20,8 @@ public class WindowLayout extends LayoutAdapter {
     public void layoutContainer(Container parent) {
 
         //board view layout
-        int len = Math.min(parent.getWidth()* 3 / 5, parent.getHeight());
-        int timerWidth = Math.min(parent.getWidth() / 5, parent.getHeight());
+        int len = Math.min((parent.getWidth() * 3) / 4, parent.getHeight());
+        int timerWidth = Math.min(parent.getWidth() / 4, parent.getHeight());
         boardView.setBounds(0, 0, len, len);
         timerView.setBounds(len,0,timerWidth,len);
     }
