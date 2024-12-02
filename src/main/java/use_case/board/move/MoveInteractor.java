@@ -18,6 +18,10 @@ public class MoveInteractor implements MoveInputBoundary{
         this.presenter = presenter;
     }
 
+    /**
+     * perform a move
+     * @param data : the board, the coordinate was clicked and all valid moves
+     */
     @Override
     public void execute(MoveInputData data) {
         ChariotBoard board = data.board();
@@ -50,6 +54,12 @@ public class MoveInteractor implements MoveInputBoundary{
         }presenter.prepareSuccessView(moveOutputData);
     }
 
+    /**
+     * get the message to be shown when game is over with specific state and turn
+     * @param state : GameState : checkmate, stalemate, fifty_move_rule, threefold_repetition
+     * @param blackToMove : black turn or not
+     * @return message to be shown
+     */
     @NotNull
     private static String getString(Board.GameState state, boolean blackToMove) {
         String msg = "ERROR : Game End by Unknown Error";
@@ -69,6 +79,12 @@ public class MoveInteractor implements MoveInputBoundary{
         return msg;
     }
 
+    /**
+     * return the move string if the given coordinate is a valid move in valid moves array
+     * @param validMoves : an array contains all valid moves
+     * @param coordinate : the coordinate was clicked
+     * @return : a move string, for example: a1a2 is a piece move from a1 to a2
+     */
     private String findValidMoves(List<String> validMoves, Coordinate coordinate) {
         String stringCoordinate = coordinate.toString();
         for (String validMove : validMoves) {

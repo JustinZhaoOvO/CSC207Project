@@ -16,6 +16,10 @@ public class SelectInteractor implements SelectInputBoundary{
 
     }
 
+    /**
+     * determine if a valid selection, if so, update the selected pieces and valid moves
+     * @param data : the coordinate was clicked and the board
+     */
     @Override
     public void execute(SelectInputData data) {
         ChariotBoard board = data.board();

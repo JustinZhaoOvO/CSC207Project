@@ -3,6 +3,9 @@ package entity;
 
 import java.awt.*;
 
+/**
+ * Constants
+ */
 public class BoardConstants {
     public static final char UPPERLEFTLETTER = 'a';
     public static final char UPPERLEFTNUMBER = '8';
