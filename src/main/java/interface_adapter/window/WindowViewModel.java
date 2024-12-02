@@ -2,16 +2,13 @@ package interface_adapter.window;
 
 import interface_adapter.ViewModel;
 
-import java.beans.PropertyChangeListener;
-
 public class WindowViewModel extends ViewModel<WindowState> {
 
     public WindowViewModel(String viewName) {
         super(viewName);
     }
 
-
-    // 现有的 Setter 方法（可选，如果需要在其他地方使用）
+    // Existing setter methods
     public void setPaused(boolean paused) {
         WindowState windowState = new WindowState();
         windowState.setPaused(paused);
@@ -53,5 +50,4 @@ public class WindowViewModel extends ViewModel<WindowState> {
         this.setState(windowState);
         this.firePropertyChanged("move");
     }
-
 }

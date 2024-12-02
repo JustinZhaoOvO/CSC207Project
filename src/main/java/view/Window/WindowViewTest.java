@@ -15,10 +15,11 @@ public class WindowViewTest extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
         this.setSize(1014, 637);
-        this.setLocation(250,150);
+        this.setLocation(250, 150);
 
+        WindowViewModel windowViewModel = new WindowViewModel(ViewStates.BOARD_VIEW);
 
-        WindowBuilder builder = new WindowBuilder(new WindowViewModel(ViewStates.BOARD_VIEW));
+        WindowBuilder builder = new WindowBuilder(windowViewModel);
         builder.addBoard();
         builder.addTimer(); // Add timer to the window
         WindowView build = builder.build();
