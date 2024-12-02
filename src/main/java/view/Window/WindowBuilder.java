@@ -70,7 +70,7 @@ public class WindowBuilder {
 
     public WindowBuilder addTimer() {
         // Initialize timer components
-        long totalTimePerPlayer = 5 * 60 * 1000; // 5 minutes per player
+        long totalTimePerPlayer = 30 * 60 * 1000; // 5 minutes per player
         TimerView timerView = new TimerView(totalTimePerPlayer);
 
         // Instantiate TimerManager with WindowViewModel

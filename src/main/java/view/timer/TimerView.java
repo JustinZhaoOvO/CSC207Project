@@ -36,32 +36,27 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         setLayout(null); // Use absolute positioning
 
         // Load and scale images
-        Image pauseImage = ImageConstants.PAUSEBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        Image startImage = ImageConstants.STARTBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        Image restartImage = ImageConstants.RESTARTBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        Image continueImage = ImageConstants.CONTINUEBUTTON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        int buttonWidth = 50;
+        int buttonHeight = 50;
+        Image pauseImage = ImageConstants.PAUSEBUTTON.getScaledInstance(buttonWidth, buttonHeight, Image.SCALE_SMOOTH);
+        Image startImage = ImageConstants.STARTBUTTON.getScaledInstance(buttonWidth, buttonHeight, Image.SCALE_SMOOTH);
+        Image restartImage = ImageConstants.RESTARTBUTTON.getScaledInstance(buttonWidth, buttonHeight, Image.SCALE_SMOOTH);
+        Image continueImage = ImageConstants.CONTINUEBUTTON.getScaledInstance(150, 50, Image.SCALE_SMOOTH); // Continue button image scaled to 150x50
 
-        // Initialize pause button
+        // Initialize buttons
         pauseButton = new JButton(new ImageIcon(pauseImage));
-        pauseButton.setBounds(10, 550, 50, 50);
         styleButton(pauseButton);
         add(pauseButton);
 
-        // Initialize start button
         startButton = new JButton(new ImageIcon(startImage));
-        startButton.setBounds(70, 550, 50, 50);
         styleButton(startButton);
         add(startButton);
 
-        // Initialize restart button
         restartButton = new JButton(new ImageIcon(restartImage));
-        restartButton.setBounds(130, 550, 50, 50);
         styleButton(restartButton);
         add(restartButton);
 
-        // Initialize continue button
         continueButton = new JButton(new ImageIcon(continueImage));
-        continueButton.setBounds(70, 550, 50, 50);
         styleButton(continueButton);
         add(continueButton);
 
@@ -69,6 +64,19 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         continueButton.setVisible(true);
         startButton.setVisible(false);
         pauseButton.setVisible(false);
+
+        // Set button bounds using absolute values
+        // Adjusted positions to ensure buttons are within the panel
+        // Panel width is 200 pixels
+
+        // Pause button at (25, 550)
+        pauseButton.setBounds(25, 550, 50, 50);
+        // Start button at (125, 550)
+        startButton.setBounds(125, 550, 50, 50);
+        // Continue button centered at (25, 550), size 150x50
+        continueButton.setBounds(25, 550, 150, 50);
+        // Restart button at (75, 490)
+        restartButton.setBounds(75, 490, 50, 50);
     }
 
     private void styleButton(JButton button) {
