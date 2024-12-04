@@ -22,6 +22,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
     boolean isPaused;
     final long totalTime; // Total time per player (milliseconds)
     boolean gameOver;
+    String pauseMessage; // Message to display when paused
 
     // Constructor, accepts total time per player as parameter
     public TimerView(long totalTimePerPlayer) {
@@ -33,6 +34,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         this.isPaused = false;
         this.totalTime = totalTimePerPlayer;
         this.gameOver = false;
+        this.pauseMessage = ""; // Initialize pause message as empty
 
         setLayout(null); // Use absolute positioning
 
@@ -117,6 +119,13 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         pauseButton.setEnabled(true);
         startButton.setEnabled(false);
         continueButton.setEnabled(false);
+
+        // Enable Restart button when not paused
+        restartButton.setEnabled(true);
+        restartButton.setVisible(true);
+
+        // Clear pause message
+        pauseMessage = "";
     }
 
     public void showStartButton() {
@@ -126,6 +135,13 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         pauseButton.setEnabled(false);
         startButton.setEnabled(true);
         continueButton.setEnabled(false);
+
+        // Disable and hide Restart button when paused
+        restartButton.setEnabled(false);
+        restartButton.setVisible(false);
+
+        // Set pause message
+        pauseMessage = "Please resume to restart the game";
     }
 
     public void showContinueButton() {
@@ -135,6 +151,13 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         pauseButton.setEnabled(false);
         startButton.setEnabled(false);
         continueButton.setEnabled(true);
+
+        // Enable Restart button when not paused
+        restartButton.setEnabled(true);
+        restartButton.setVisible(true);
+
+        // Clear pause message
+        pauseMessage = "";
     }
 
     // Disable pause, start, and continue buttons
@@ -142,6 +165,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         pauseButton.setEnabled(false);
         startButton.setEnabled(false);
         continueButton.setEnabled(false);
+        restartButton.setEnabled(false);
     }
 
     // Enable pause, start, and continue buttons
@@ -149,6 +173,7 @@ public class TimerView extends JPanel implements PropertyChangeListener {
         pauseButton.setEnabled(true);
         startButton.setEnabled(true);
         continueButton.setEnabled(true);
+        restartButton.setEnabled(true);
     }
 
     @Override
@@ -295,6 +320,14 @@ public class TimerView extends JPanel implements PropertyChangeListener {
             g2.setColor(Color.RED);
             textWidth = g2.getFontMetrics().stringWidth(message);
             g2.drawString(message, (width - textWidth) / 2, height / 2);
+        }
+
+        // Draw pause message if paused
+        if (isPaused && !pauseMessage.isEmpty()) {
+            g2.setFont(new Font("Arial", Font.BOLD, 12));
+            g2.setColor(Color.RED);
+            textWidth = g2.getFontMetrics().stringWidth(pauseMessage);
+            g2.drawString(pauseMessage, (width - textWidth) / 2, 150); // Position at top of the panel
         }
     }
 
